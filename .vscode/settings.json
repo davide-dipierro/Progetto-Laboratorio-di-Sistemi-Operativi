@@ -3,9 +3,5 @@
         "semaphore.h": "c",
         "in.h": "c",
         "stdio.h": "c"
-    },
-    "sonarlint.connectedMode.project": {
-        "connectionId": "http-localhost-9000-",
-        "projectKey": "ProgettoLSO"
     }
 }
