@@ -1,9 +1,9 @@
-#include "clientecontroller.h"
+#include "cliente.h"
 
 pthread_mutex_t mutex_n_clienti = PTHREAD_MUTEX_INITIALIZER;
 int n_clienti = 0;
 
-void clienteParser(char* request, char* response, carrello_t* carrelli){
+void clienteParser(char* request, char* response, carrello_t* carrelli, coda_casse_t* coda_casse){
     int id;
     char comando[10];
     sscanf(request, "cliente %d %s", &id, comando);
@@ -12,6 +12,7 @@ void clienteParser(char* request, char* response, carrello_t* carrelli){
     else if(strcmp(comando, "aggiungi") == 0) clienteAggiunge(id, request, response, carrelli);
     else if(strcmp(comando, "rimuovi") == 0) clienteRimuove(id, request, response, carrelli);
     else if(strcmp(comando, "stampa") == 0) clienteStampa(id, response, carrelli);
+    else if(strcmp(comando, "coda") == 0) clienteSiMetteInCodaAllaCassa(id, response, carrelli, coda_casse);
     else strcpy(response, "Comando non riconosciuto\n\0");
 }
 
@@ -21,11 +22,11 @@ void clienteEntra(int id, char* response, carrello_t* carrelli){
     pthread_mutex_unlock(&mutex_n_clienti);
     printf("Cliente entrato, clienti in negozio: %d\n", n_clienti);
     int i = 0;
-    while(i < MAX_CLIENTI && carrelli[i].occupato) i++;
+    while(i < MAX_CLIENTI && carrelli[i].status != LIBERO) i++;
     if(i < MAX_CLIENTI){
-        carrelli[i].occupato = 1;
+        carrelli[i].status = IN_NEGOZIO;
         printf("Carrello %d assegnato al cliente\n", i);
-        sprintf(response, "ID: %d\n", i);
+        sprintf(response, "ID_carrello: %d\n", i);
     }else{
         printf("Non ci sono carrelli disponibili\n");
         strcpy(response, "Non ci sono carrelli disponibili\n\0");
@@ -37,7 +38,7 @@ void clienteEsce(int id, char* response, carrello_t* carrelli){
     n_clienti--;
     pthread_mutex_unlock(&mutex_n_clienti);
     printf("Cliente uscito, clienti in negozio: %d\n", n_clienti);
-    carrelli[id].occupato = 0;
+    carrelli[id].status = LIBERO;
     printf("Carrello %d liberato\n", id);
     strcpy(response, "Sei uscito dal negozio\n\0");
 }
@@ -68,4 +69,14 @@ void clienteStampa(int id, char* response, carrello_t* carrelli){
     printf("Stampa carrello %d\n", id);
     stampa_carrello(&carrelli[id]);
     sprintf(response, "Totale: %.2f\n", calcola_totale(&carrelli[id]));
+}
+
+void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli, coda_casse_t* casse){
+    if(carrelli[id].status == IN_NEGOZIO) {
+        aggiungi_cliente_coda(id, casse);
+        carrelli[id].status = IN_CODA;
+        printf("Cliente %d si è messo in coda alle casse\n", id);
+    }
+    int position = posizione_cliente_coda(id, casse);
+    sprintf(response, "Sei in coda alle casse, ci sono %d persone avanti a te\n", position);
 }

@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
 
         // Set server address
         server_address.sin_family = AF_INET;
-        server_address.sin_port = htons(8080);
-        server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+        server_address.sin_port = htons(5050);
+        server_address.sin_addr.s_addr = inet_addr("home.davidedipierro.it");
 
         // Connect to server
         if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) {

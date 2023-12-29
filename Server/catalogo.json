@@ -1,0 +1,55 @@
+{
+    "prodotti": [
+      {
+        "id": 1,
+        "nome": "Pasta",
+        "prezzo": 1.99
+      },
+      {
+        "id": 2,
+        "nome": "Latte",
+        "prezzo": 0.99
+      },
+      {
+        "id": 3,
+        "nome": "Pane",
+        "prezzo": 2.49
+      },
+      {
+        "id": 4,
+        "nome": "Salsa di pomodoro",
+        "prezzo": 1.79
+      },
+      {
+        "id": 5,
+        "nome": "Pollo",
+        "prezzo": 5.99
+      },
+      {
+        "id": 6,
+        "nome": "Uova",
+        "prezzo": 2.29
+      },
+      {
+        "id": 7,
+        "nome": "Banane",
+        "prezzo": 0.69
+      },
+      {
+        "id": 8,
+        "nome": "Yogurt",
+        "prezzo": 1.49
+      },
+      {
+        "id": 9,
+        "nome": "Cereali",
+        "prezzo": 3.99
+      },
+      {
+        "id": 10,
+        "nome": "Acqua minerale",
+        "prezzo": 0.89
+      }
+    ]
+  }
+  

@@ -1,5 +1,3 @@
-#define MAX_CASSIERI 2
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,14 +10,15 @@
 #include <semaphore.h>
 
 #include "carrello.h"
-#include "clientecontroller.h"
-
-void cassiereEntra(char*, char*);
-void cassiereEsce(char*, char*);
+#include "cliente.h"
+#include "cassa.h"
+#include "config.h"
 
 carrello_t carrelli[MAX_CLIENTI];
+coda_casse_t coda_casse;
+pthread_mutex_t mutex_coda_casse;
 
-#define PORT 8080
+#define PORT 5050
 #define MAX_CONNECTIONS 10
 #define MAX_REQUEST_SIZE 1024
 #define MAX_RESPONSE_SIZE 1024
@@ -32,11 +31,15 @@ typedef struct {
 void* process(void * ptr);
 void send_response(int socket, char * response);
 void read_request(int socket, char * request);
+void inviaCatalogo(char* request, char* response);
 
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
 int n_cassieri = 0;
 
 int main(int argc, char * argv[]) {
+    printf("Inizializzo carrelli\n");
+    inizializza_carrelli(carrelli);
+    
     printf("Starting server\n");
     int server_socket = 0;
     int client_socket = 0;
@@ -75,8 +78,9 @@ void* process(void * ptr) {
     read_request(socket, request);
 
     // Processo la richiesta
-    if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli);
-    else if(strstr(request, "cassiere") != NULL) cassiereEsce(request, response);
+    if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli, &coda_casse);
+    else if(strstr(request, "cassiere") != NULL) printf("Richiesta cassiere\n");
+    else if(strstr(request, "catalogo") != NULL) inviaCatalogo(request, response);
     else printf("Richiesta non valida\n"); 
     
 
@@ -95,19 +99,21 @@ void read_request(int socket, char* request) {
     if(read(socket, request, MAX_REQUEST_SIZE) == -1) perror("Read"), exit(1);
 }
 
+void inviaCatalogo(char* request, char* response) {
+    printf("Richiesta catalogo\n");
+    // Apro il file catalogo.txt
+    FILE* catalogo = fopen("catalogo.json", "r");
+    if(catalogo == NULL) perror("Errore apertura catalogo"), exit(1);
 
-void cassiereEntra(char* request, char* response){
-    pthread_mutex_lock(&mutex_cassieri);
-    n_cassieri++;
-    pthread_mutex_unlock(&mutex_cassieri);
-    printf("Cassiere entrato, cassieri in negozio: %d\n", n_cassieri);
-    strcpy(response, "Sei entrato nel negozio\n\0");
+    // Leggo il file catalogo.txt e lo salvo nella stringa response
+    char buffer[MAX_RESPONSE_SIZE];
+    while(fgets(buffer, MAX_RESPONSE_SIZE, catalogo) != NULL) {
+        strcat(response, buffer);
+    }
+
+    // Chiudo il file catalogo.txt
+    fclose(catalogo);
+    
 }
 
-void cassiereEsce(char* request, char* response){
-    pthread_mutex_lock(&mutex_cassieri);
-    n_cassieri--;
-    pthread_mutex_unlock(&mutex_cassieri);
-    printf("Cassiere uscito, cassieri in negozio: %d\n", n_cassieri);
-    strcpy(response, "Sei uscito dal negozio\n\0");
-}   
+

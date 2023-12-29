@@ -1,22 +1,19 @@
 CC = gcc
-#CFLAGS = -Wall -Wextra
+CFLAGS =# -Wall -Wextra
 
-SERVER_SRCS = server.c
-SERVER_OBJS = $(SERVER_SRCS:.c=.o)
+SRCS = main.c cliente.c cassa.c carrello.c
+OBJS = $(SRCS:.c=.o)
+TARGET = server
 
-CLIENTE_CONTROLLER_SRCS = clientecontroller.c
-CLIENTE_CONTROLLER_OBJS = $(CLIENTE_CONTROLLER_SRCS:.c=.o)
+.PHONY: all clean
 
-CARRELLO_SRCS = carrello.c
-CARRELLO_OBJS = $(CARRELLO_SRCS:.c=.o)
+all: $(TARGET)
 
-all: server
-
-server: $(SERVER_OBJS) $(CLIENTE_CONTROLLER_OBJS) $(CARRELLO_OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f server $(SERVER_OBJS) $(CLIENTE_CONTROLLER_OBJS) $(CARRELLO_OBJS)
+	rm -f $(OBJS) $(TARGET)
