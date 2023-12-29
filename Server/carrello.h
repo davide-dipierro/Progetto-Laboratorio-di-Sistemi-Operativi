@@ -1,44 +1,38 @@
-// Scopo: Definire le funzioni per la gestione della coda
+#ifndef CARRELLO_H
+#define CARRELLO_H
+#define MAX_PRODOTTI 10
 
-// Librerie
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-// Struttura dati per la coda
-typedef struct carrello {
-    int id_prodotto;
-    struct carrello *next;
+#include <stdbool.h>
+
+// Struttura dati per il prodotto
+typedef struct {
+    int id;
+    char nome[50];
+    float prezzo;
+} prodotto_t;
+
+// Nodo della coda
+typedef struct nodo {
+    prodotto_t prodotto;
+    struct nodo* next;
+} nodo_t;
+
+// Struttura dati per la carrello
+typedef struct {
+    bool occupato; // 0 = libero, 1 = occupato
+    int n_prodotti; // Numero di prodotti nel carrello
+    nodo_t* head; // Puntatore alla testa della coda
+    nodo_t* tail; // Puntatore alla coda della coda
 } carrello_t;
 
-//array di carrelli
-carrello_t carrelli[MAX_CLIENTI];
+void rimuovi_prodotto(carrello_t*, int);
+void stampa_carrello(carrello_t*);
+void aggiungi_prodotto(carrello_t*, prodotto_t);
+float calcola_totale(carrello_t*);
+void rimuovi_prodotto(carrello_t*, int);
 
-
-// Variabili per la coda
-carrello_t *head[MAX_CLIENTI] = {NULL};
-carrello_t *tail[MAX_CLIENTI] = {NULL};
-
-// Prototipi delle funzioni
-void acquista(int n_carrello, int id_prodotto);
-void vendi(int n_carrello);
-
-// Funzione per l'inserimento di un cliente nella coda
-void acquista(int n_carrello, int id_prodotto) {
-    carrello_t *node = (carrello_t*)malloc(sizeof(carrello_t));
-    node->id_prodotto = id_prodotto;
-    node->next = NULL;
-    if (head[n_carrello] == NULL) {
-        head[n_carrello] = node;
-        tail[n_carrello] = node;
-    } else {
-        tail[n_carrello]->next = node;
-        tail[n_carrello] = node;
-    }
-}
-
-// Funzione per l'estrazione di un cliente dalla coda
-void vendi(int n_carrello) {
-    carrello_t *node = head[n_carrello];
-    head[n_carrello] = head[n_carrello]->next;
-    free(node);
-}
+#endif

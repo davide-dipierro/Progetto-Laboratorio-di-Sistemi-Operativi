@@ -1,4 +1,3 @@
-#define MAX_CLIENTI 3
 #define MAX_CASSIERI 2
 
 #include <stdio.h>
@@ -13,11 +12,12 @@
 #include <semaphore.h>
 
 #include "carrello.h"
+#include "clientecontroller.h"
 
-void clienteEntra(char*, char*);
-void clienteEsce(char*, char*);
 void cassiereEntra(char*, char*);
 void cassiereEsce(char*, char*);
+
+carrello_t carrelli[MAX_CLIENTI];
 
 #define PORT 8080
 #define MAX_CONNECTIONS 10
@@ -33,24 +33,15 @@ void* process(void * ptr);
 void send_response(int socket, char * response);
 void read_request(int socket, char * request);
 
-carrello_t carrelli[MAX_CLIENTI];
-
-
-//semaforo clienti
-sem_t sem_clienti;
-pthread_mutex_t mutex_n_clienti = PTHREAD_MUTEX_INITIALIZER;
-int n_clienti = 0;
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
 int n_cassieri = 0;
 
 int main(int argc, char * argv[]) {
     printf("Starting server\n");
-    int i = 0;
     int server_socket = 0;
     int client_socket = 0;
     struct sockaddr_in server_address;
     pthread_t thread;
-    sem_init(&sem_clienti, 0, MAX_CLIENTI);
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;
@@ -71,8 +62,7 @@ int main(int argc, char * argv[]) {
         // Creo un thread per gestire la connessione
         if (pthread_create(&thread, NULL, process, (void *) &client_socket) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     }
-    
-    sem_destroy(&sem_clienti);
+
     return 0;
 }
 
@@ -85,10 +75,8 @@ void* process(void * ptr) {
     read_request(socket, request);
 
     // Processo la richiesta
-    if(strstr(request, "cliente entra") != NULL) clienteEntra(request, response);
-    else if(strstr(request, "cliente esce") != NULL) clienteEsce(request, response);
-    else if(strstr(request, "cassiere entra") != NULL) cassiereEntra(request, response);
-    else if(strstr(request, "cassiere esce") != NULL) cassiereEsce(request, response);
+    if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli);
+    else if(strstr(request, "cassiere") != NULL) cassiereEsce(request, response);
     else printf("Richiesta non valida\n"); 
     
 
@@ -107,27 +95,6 @@ void read_request(int socket, char* request) {
     if(read(socket, request, MAX_REQUEST_SIZE) == -1) perror("Read"), exit(1);
 }
 
-void clienteEntra(char* request, char* response){
-    sem_wait(&sem_clienti);
-    pthread_mutex_lock(&mutex_n_clienti);
-    n_clienti++;
-    pthread_mutex_unlock(&mutex_n_clienti);
-    int val;
-    sem_getvalue(&sem_clienti, &val);
-    printf("Cliente entrato, clienti in negozio: %d\n", val);
-    strcpy(response, "Sei entrato nel negozio\n\0"); 
-}
-
-void clienteEsce(char* request, char* response){
-    pthread_mutex_lock(&mutex_n_clienti);
-    n_clienti--;
-    pthread_mutex_unlock(&mutex_n_clienti);
-    sem_post(&sem_clienti);
-    int val;
-    sem_getvalue(&sem_clienti, &val);
-    printf("Cliente uscito, clienti in negozio: %d\n", val);
-    strcpy(response, "Sei uscito dal negozio\n\0");
-}
 
 void cassiereEntra(char* request, char* response){
     pthread_mutex_lock(&mutex_cassieri);
