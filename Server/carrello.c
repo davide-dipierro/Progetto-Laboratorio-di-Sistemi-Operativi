@@ -2,7 +2,7 @@
 
 void aggiungi_prodotto(carrello_t* carrello, prodotto_t prodotto) {
     // Creazione del nuovo nodo_carr
-    noto_t_carr* nuovo_nodo_carr = (noto_t_carr*)malloc(sizeof(noto_t_carr));
+    nodo_t_carr* nuovo_nodo_carr = (nodo_t_carr*)malloc(sizeof(nodo_t_carr));
     nuovo_nodo_carr->prodotto = prodotto;
     nuovo_nodo_carr->next = NULL;
 
@@ -20,8 +20,8 @@ void aggiungi_prodotto(carrello_t* carrello, prodotto_t prodotto) {
 }
 
 void rimuovi_prodotto(carrello_t* carrello, int id_prodotto) {
-    noto_t_carr* nodo_carr_corrente = carrello->head;
-    noto_t_carr* nodo_carr_precedente = NULL;
+    nodo_t_carr* nodo_carr_corrente = carrello->head;
+    nodo_t_carr* nodo_carr_precedente = NULL;
 
     while (nodo_carr_corrente != NULL) {
         if (nodo_carr_corrente->prodotto.id == id_prodotto) {
@@ -52,7 +52,7 @@ void rimuovi_prodotto(carrello_t* carrello, int id_prodotto) {
 }
 
 void stampa_carrello(carrello_t* carrello) {
-    noto_t_carr* nodo_carr_corrente = carrello->head;
+    nodo_t_carr* nodo_carr_corrente = carrello->head;
 
     while (nodo_carr_corrente != NULL) {
         printf("ID: %d, Nome: %s, Prezzo: %.2f\n", nodo_carr_corrente->prodotto.id, nodo_carr_corrente->prodotto.nome, nodo_carr_corrente->prodotto.prezzo);
@@ -62,7 +62,7 @@ void stampa_carrello(carrello_t* carrello) {
 
 float calcola_totale(carrello_t* carrello) {
     int totale = 0;
-    noto_t_carr* nodo_carr_corrente = carrello->head;
+    nodo_t_carr* nodo_carr_corrente = carrello->head;
 
     while (nodo_carr_corrente != NULL) {
         totale += nodo_carr_corrente->prodotto.prezzo;
@@ -78,5 +78,19 @@ void inizializza_carrelli(carrello_t* carrelli) {
         carrelli[i].n_prodotti = 0;
         carrelli[i].head = NULL;
         carrelli[i].tail = NULL;
+        carrelli[i].ultima_operazione = time(NULL);
     }
 }
+
+
+void svuota_carrello(carrello_t* carrello) {
+    nodo_t_carr* nodo_carr_corrente = carrello->head;
+
+    while (nodo_carr_corrente != NULL) {
+        rimuovi_prodotto(carrello, nodo_carr_corrente->prodotto.id);
+        nodo_carr_corrente = nodo_carr_corrente->next;
+    }
+
+}
+
+

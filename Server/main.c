@@ -17,6 +17,7 @@
 carrello_t carrelli[MAX_CLIENTI];
 coda_casse_t coda_casse;
 pthread_mutex_t mutex_coda_casse;
+pthread_mutex_t mutex_n_clienti;
 
 #define PORT 5050
 #define MAX_CONNECTIONS 10
@@ -31,12 +32,13 @@ typedef struct {
 void* process(void * ptr);
 void send_response(int socket, char * response);
 void read_request(int socket, char * request);
-void inviaCatalogo(char* request, char* response);
+void inviaCatalogo(char* response);
+void* riordinaCarrelli();
 
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
 int n_cassieri = 0;
 
-int main(int argc, char * argv[]) {
+int main() {
     printf("Inizializzo carrelli\n");
     inizializza_carrelli(carrelli);
     
@@ -44,7 +46,10 @@ int main(int argc, char * argv[]) {
     int server_socket = 0;
     int client_socket = 0;
     struct sockaddr_in server_address;
-    pthread_t thread;
+    pthread_t thread_client;
+    pthread_t thread_pulisci_carrelli;
+    if(pthread_create(&thread_pulisci_carrelli, NULL, riordinaCarrelli, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+    printf("Thread pulizia carrelli creato\n");
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;
@@ -63,7 +68,7 @@ int main(int argc, char * argv[]) {
         if (client_socket < 0) perror("Could not establish new connection"), exit(EXIT_FAILURE);
 
         // Creo un thread per gestire la connessione
-        if (pthread_create(&thread, NULL, process, (void *) &client_socket) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+        if (pthread_create(&thread_client, NULL, process, (void *)&client_socket) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     }
 
     return 0;
@@ -80,7 +85,7 @@ void* process(void * ptr) {
     // Processo la richiesta
     if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli, &coda_casse);
     else if(strstr(request, "cassiere") != NULL) printf("Richiesta cassiere\n");
-    else if(strstr(request, "catalogo") != NULL) inviaCatalogo(request, response);
+    else if(strstr(request, "catalogo") != NULL) inviaCatalogo(response);
     else printf("Richiesta non valida\n"); 
     
 
@@ -99,7 +104,7 @@ void read_request(int socket, char* request) {
     if(read(socket, request, MAX_REQUEST_SIZE) == -1) perror("Read"), exit(1);
 }
 
-void inviaCatalogo(char* request, char* response) {
+void inviaCatalogo(char* response) {
     printf("Richiesta catalogo\n");
     // Apro il file catalogo.txt
     FILE* catalogo = fopen("catalogo.json", "r");
@@ -116,4 +121,17 @@ void inviaCatalogo(char* request, char* response) {
     
 }
 
-
+void* riordinaCarrelli() {
+    while(1) {
+        sleep(10); 
+        printf("Riordino carrelli\n");
+        for(int i = 0; i < MAX_CLIENTI; i++) {
+            if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + 5 < time(NULL)) {
+                printf("Carrello %d riordinato\n", i);
+                svuota_carrello(&carrelli[i]);
+                carrelli[i].status = LIBERO;
+                decrementa_n_clienti();
+            }
+        }
+    }
+}
