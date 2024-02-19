@@ -38,6 +38,7 @@ void clienteParser(char* request, char* response, carrello_t* carrelli, coda_cas
     else if(strcmp(comando, "rimuovi") == 0) clienteRimuove(id, request, response, carrelli);
     else if(strcmp(comando, "stampa") == 0) clienteStampa(id, response, carrelli);
     else if(strcmp(comando, "coda") == 0) clienteSiMetteInCodaAllaCassa(id, response, carrelli, coda_casse);
+    else if(strcmp(comando, "paga") == 0) clientePaga(id, response, carrelli, coda_casse);
     else strcpy(response, "Comando non riconosciuto\n\0");
 
     if(strcmp(comando, "esce") != 0) carrelli[id].ultima_operazione = time(NULL);
@@ -111,4 +112,16 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
     }
     int position = posizione_cliente_coda(id, casse);
     sprintf(response, "%d\n", position);
+}
+
+void clientePaga(int id, char* response, carrello_t* carrelli, coda_casse_t* casse){
+    if(carrelli[id].status == IN_CODA) {
+        printf("Cliente %d paga alla cassa\n", id);
+        carrelli[id].status = LIBERO;
+        rimuovi_cliente_coda_id(id, casse);
+        strcpy(response, "Hai pagato\n\0");
+    } else {
+        printf("Cliente %d non ha pagato, non in coda\n", id);
+        strcpy(response, "Sessione scaduta\n\0");
+    }
 }

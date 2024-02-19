@@ -1,4 +1,4 @@
-#include "cassa.h"
+#include "codaCassa.h"
 
 void aggiungi_cliente_coda(int id_cliente, coda_casse_t* coda_casse){
     pthread_mutex_lock(&mutex_coda_casse); // Lock mutex before accessing the queue

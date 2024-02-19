@@ -4,7 +4,10 @@
         "in.h": "c",
         "stdio.h": "c",
         "clientecontroller.h": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "stdbool.h": "c",
+        "cassiere.h": "c",
+        "config.h": "c"
     },
     "sonarlint.connectedMode.project": {
         "connectionId": "http-home-davidedipierro-it-9000-",

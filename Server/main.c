@@ -11,8 +11,9 @@
 
 #include "carrello.h"
 #include "cliente.h"
-#include "cassa.h"
+#include "codaCassa.h"
 #include "config.h"
+#include "cassiere.h"
 
 carrello_t carrelli[MAX_CLIENTI];
 coda_casse_t coda_casse;

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <pthread.h>
 #include "carrello.h"
-#include "cassa.h"
+#include "codaCassa.h"
 #include "config.h"
 
 void decrementa_n_clienti();
@@ -19,5 +19,6 @@ void clienteAggiunge(int, char*, char*, carrello_t*);
 void clienteRimuove(int, char*, char*, carrello_t*);
 void clienteStampa(int, char*, carrello_t*);
 void clienteSiMetteInCodaAllaCassa(int, char*, carrello_t*, coda_casse_t*);
+void clientePaga(int, char*, carrello_t*, coda_casse_t*);
 
 #endif

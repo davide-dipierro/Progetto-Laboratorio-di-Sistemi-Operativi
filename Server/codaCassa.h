@@ -1,5 +1,5 @@
-#ifndef CASSE_H
-#define CASSE_H
+#ifndef CODACASSA_H
+#define CODACASSA_H
 
 #include <stdio.h>
 #include <stdlib.h>
