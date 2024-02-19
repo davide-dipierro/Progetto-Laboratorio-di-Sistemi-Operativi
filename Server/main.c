@@ -123,12 +123,13 @@ void inviaCatalogo(char* response) {
 
 void* riordinaCarrelli() {
     while(1) {
-        sleep(10); 
+        sleep(TIMER_PULIZIA_CARRELLI); 
         printf("Riordino carrelli\n");
         for(int i = 0; i < MAX_CLIENTI; i++) {
             if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + 5 < time(NULL)) {
                 printf("Carrello %d riordinato\n", i);
                 svuota_carrello(&carrelli[i]);
+                if(carrelli[i].status == IN_CODA) rimuovi_cliente_coda_id(i, &coda_casse);
                 carrelli[i].status = LIBERO;
                 decrementa_n_clienti();
             }

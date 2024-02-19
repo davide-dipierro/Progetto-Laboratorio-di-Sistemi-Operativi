@@ -24,8 +24,8 @@ void decrementa_n_clienti(){
 }
 
 void clienteParser(char* request, char* response, carrello_t* carrelli, coda_casse_t* coda_casse){
-    int id;
     printf("Richiesta: %s\n", request);
+    int id;
     char comando[10];
     char dati[100];
     sscanf(request, "cliente:%d:%s\n:%s", &id, comando, dati);
@@ -51,8 +51,9 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli){
     while(i < MAX_CLIENTI && carrelli[i].status != LIBERO) i++;
     if(i < MAX_CLIENTI){
         carrelli[i].status = IN_NEGOZIO;
+        carrelli[i].ultima_operazione = time(NULL);
         printf("Carrello %d assegnato al cliente\n", i);
-        sprintf(response, "ID_carrello: %d\n", i);
+        sprintf(response, "ID_carrello:%d\n", i);
         *id = i;
     }else{
         printf("Non ci sono carrelli disponibili\n");
@@ -102,11 +103,12 @@ void clienteStampa(int id, char* response, carrello_t* carrelli){
 }
 
 void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli, coda_casse_t* casse){
+    printf("Cliente %d si mette in coda\n", id);
     if(carrelli[id].status == IN_NEGOZIO) {
         aggiungi_cliente_coda(id, casse);
         carrelli[id].status = IN_CODA;
         printf("Cliente %d si è messo in coda alle casse\n", id);
     }
     int position = posizione_cliente_coda(id, casse);
-    sprintf(response, "Sei in coda alle casse, ci sono %d persone avanti a te\n", position);
+    sprintf(response, "%d\n", position);
 }

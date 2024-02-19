@@ -34,6 +34,7 @@ typedef struct {
 
 void aggiungi_cliente_coda(int, coda_casse_t*);
 int rimuovi_cliente_coda(coda_casse_t*);
+int rimuovi_cliente_coda_id(int, coda_casse_t*);
 int numero_clienti_coda(coda_casse_t*);
 int posizione_cliente_coda(int, coda_casse_t*);
 
