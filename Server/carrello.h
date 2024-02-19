@@ -25,7 +25,8 @@ typedef enum {
     LIBERO,
     IN_NEGOZIO,
     IN_CODA,
-    IN_CASSA
+    IN_CASSA,
+    PAGAMENTO
 } stato_carrello_t;
 
 // Struttura dati per la carrello
@@ -35,6 +36,7 @@ typedef struct {
     int n_prodotti; // Numero di prodotti nel carrello
     nodo_t_carr* head; // Puntatore alla testa della coda
     nodo_t_carr* tail; // Puntatore alla coda della coda
+    pthread_mutex_t mutex; // Mutex per il carrello
 } carrello_t;
 
 

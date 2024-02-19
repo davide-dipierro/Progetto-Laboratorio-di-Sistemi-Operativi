@@ -18,5 +18,7 @@ typedef struct {
 extern pthread_mutex_t mutex_coda_casse;
 
 void cassiereEntra(int, int, carrello_t*, coda_casse_t*);
+void* aspettaFila(void*);
+void* elaboraCarrello(void*);
 
 #endif

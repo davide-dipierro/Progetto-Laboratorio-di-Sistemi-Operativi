@@ -42,7 +42,7 @@ int n_cassieri = 0;
 int main() {
     printf("Inizializzo carrelli\n");
     inizializza_carrelli(carrelli);
-    
+    cassiereEntra(5, 2, carrelli, &coda_casse);
     printf("Starting server\n");
     int server_socket = 0;
     int client_socket = 0;
@@ -127,7 +127,7 @@ void* riordinaCarrelli() {
         sleep(TIMER_PULIZIA_CARRELLI); 
         printf("Riordino carrelli\n");
         for(int i = 0; i < MAX_CLIENTI; i++) {
-            if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + 5 < time(NULL)) {
+            if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + TIMER_PULIZIA_CARRELLI < time(NULL)) {
                 printf("Carrello %d riordinato\n", i);
                 svuota_carrello(&carrelli[i]);
                 if(carrelli[i].status == IN_CODA) rimuovi_cliente_coda_id(i, &coda_casse);
