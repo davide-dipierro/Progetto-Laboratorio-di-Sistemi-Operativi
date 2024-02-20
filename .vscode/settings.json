@@ -8,7 +8,8 @@
         "stdbool.h": "c",
         "cassiere.h": "c",
         "config.h": "c",
-        "cliente.h": "c"
+        "cliente.h": "c",
+        "carrello.h": "c"
     },
     "sonarlint.connectedMode.project": {
         "connectionId": "http-home-davidedipierro-it-9000-",

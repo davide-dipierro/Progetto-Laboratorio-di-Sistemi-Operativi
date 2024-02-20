@@ -26,7 +26,8 @@ typedef enum {
     IN_NEGOZIO,
     IN_CODA,
     IN_CASSA,
-    PAGAMENTO
+    PAGAMENTO,
+    PAGATO
 } stato_carrello_t;
 
 // Struttura dati per la carrello

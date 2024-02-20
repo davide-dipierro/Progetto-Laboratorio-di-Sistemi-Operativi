@@ -14,7 +14,7 @@ void* aspettaFila(void* ptr) {
     cassiere_t* cassiere = (cassiere_t*)ptr;
     coda_casse_t* coda_casse = cassiere->coda_casse;
     while(1) {
-        printf("Aspetto fila\n");
+        //printf("Aspetto fila\n");
         pthread_t thread_elabora_carrello;
         pthread_mutex_lock(&mutex_coda_casse);
         if(coda_casse->head != NULL) { 

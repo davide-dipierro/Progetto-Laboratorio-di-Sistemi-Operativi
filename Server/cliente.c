@@ -64,18 +64,24 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli){
 }
 
 void clienteEsce(int id, char* response, carrello_t* carrelli){
-    decrementa_n_clienti();
-    printf("Cliente uscito, clienti in negozio: %d\n", get_n_clienti());
-    carrelli[id].status = LIBERO;
-    printf("Carrello %d liberato\n", id);
-    strcpy(response, "Sei uscito dal negozio\n\0");
+    if ( carrelli[id].status == PAGATO ) {
+        printf("Cliente uscito, clienti in negozio: %d\n", get_n_clienti());
+        svuota_carrello(&carrelli[id]);
+        carrelli[id].status = LIBERO;
+        decrementa_n_clienti();
+        strcpy(response, "Sei uscito dal negozio\n\0");
+    } else {
+        printf("Richiesta su carrello %d non in pagamento\n", id);
+        strcpy(response, "Sessione scaduta\n\0");
+    }
+    
 }
 
 void clienteAggiunge(int id, char* request, char* response, carrello_t* carrelli){
     int id_prodotto;
     char nome_prodotto[50];
     float prezzo_prodotto;
-    sscanf(request, "cliente:%d:aggiungi\n:%d:%s:%f", &id, &id_prodotto, nome_prodotto, &prezzo_prodotto);
+    sscanf(request, "cliente:%d:aggiungi\n:%d:%[^:]:%f", &id, &id_prodotto, nome_prodotto, &prezzo_prodotto);
     prodotto_t prodotto;
     prodotto.id = id_prodotto;
     strcpy(prodotto.nome, nome_prodotto);
@@ -105,10 +111,12 @@ void clienteStampa(int id, char* response, carrello_t* carrelli){
 }
 
 void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli, coda_casse_t* casse){
+    printf("Cliente %d si mette in coda CHIAMATA\n", id);
     if(carrelli[id].n_prodotti == 0) {
         sprintf(response, "0\n");
         return;
     }
+    printf("Status: %d == %d\n", carrelli[id].status, IN_NEGOZIO);
     if(carrelli[id].status == IN_NEGOZIO) {
         aggiungi_cliente_coda(id, casse);
         carrelli[id].status = IN_CODA;
@@ -123,8 +131,9 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
 }
 
 void clientePaga(int id, char* response, carrello_t* carrelli) {
-    if(carrelli[id].status == PAGAMENTO) {
+    if(carrelli[id].status == PAGAMENTO || carrelli[id].status == PAGATO) {
         sprintf(response, "ok\n");
+        carrelli[id].status = PAGATO;
     } else {
         sprintf(response, "Carrello in elaborazione\n");
     }

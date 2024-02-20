@@ -35,6 +35,8 @@ void send_response(int socket, char * response);
 void read_request(int socket, char * request);
 void inviaCatalogo(char* response);
 void* riordinaCarrelli();
+void* ui();
+void stampa_stickman(int num_stickman);
 
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
 int n_cassieri = 0;
@@ -42,7 +44,7 @@ int n_cassieri = 0;
 int main() {
     printf("Inizializzo carrelli\n");
     inizializza_carrelli(carrelli);
-    cassiereEntra(5, 2, carrelli, &coda_casse);
+    for(int i=0; i<N_CASSE; i++) cassiereEntra(5, 2, carrelli, &coda_casse);
     printf("Starting server\n");
     int server_socket = 0;
     int client_socket = 0;
@@ -50,7 +52,10 @@ int main() {
     pthread_t thread_client;
     pthread_t thread_pulisci_carrelli;
     if(pthread_create(&thread_pulisci_carrelli, NULL, riordinaCarrelli, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
-    printf("Thread pulizia carrelli creato\n");
+    //printf("Thread pulizia carrelli creato\n");
+    pthread_t thread_ui;
+    if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+    //printf("Thread UI creato\n");
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;
@@ -106,7 +111,7 @@ void read_request(int socket, char* request) {
 }
 
 void inviaCatalogo(char* response) {
-    printf("Richiesta catalogo\n");
+    //printf("Richiesta catalogo\n");
     // Apro il file catalogo.txt
     FILE* catalogo = fopen("catalogo.json", "r");
     if(catalogo == NULL) perror("Errore apertura catalogo"), exit(1);
@@ -135,5 +140,62 @@ void* riordinaCarrelli() {
                 decrementa_n_clienti();
             }
         }
+    }
+}
+
+void* ui(){
+    while(1){
+        printf("\033[H\033[J");
+        printf("\nIN NEGOZIO:\n");
+        int persone = 0;
+        for(int i = 0; i < MAX_CLIENTI; i++) {
+            if (carrelli[i].status == IN_NEGOZIO) {
+                persone++;
+            }
+        }
+        stampa_stickman(persone);
+        persone = 0;
+        printf("IN CODA:\n");
+        fflush(stdout);
+        for(int i = 0; i < MAX_CLIENTI; i++) {
+            if (carrelli[i].status == IN_CODA) {
+                persone++;
+            }
+        }
+        stampa_stickman(persone);
+        persone = 0;
+        printf("IN CASSA:\n");
+        for(int i = 0; i < MAX_CLIENTI; i++) {
+            if (carrelli[i].status == IN_CASSA || carrelli[i].status == PAGAMENTO) {
+                persone++;
+            }
+        }
+        stampa_stickman(persone);
+        printf("\n");
+        fflush(stdout);
+        sleep(1);
+    }
+    return NULL;
+}
+
+void stampa_stickman(int num_stickman) {
+    int i, j;
+    
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < num_stickman; j++) {
+            if (i == 0)
+                printf(" O ");
+            else if (i == 1)
+                printf("/|\\");
+            else if (i == 2)
+                printf(" | ");
+            else if (i == 3)
+                printf("/ \\");
+            else
+                printf("   ");
+            
+            printf("   "); // spazio tra gli stickman
+        }
+        printf("\n");
     }
 }

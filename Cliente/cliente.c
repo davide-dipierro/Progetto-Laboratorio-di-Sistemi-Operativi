@@ -34,7 +34,6 @@ void stampaCatalogo(int sockfd, char* request, char* response);
 
 int id=-1;
 
-
 int main(int argc, char** argv) {
     while (1){
         system("clear");
@@ -64,15 +63,17 @@ int main(int argc, char** argv) {
         int scelta = getScelta();
         switch (scelta) {
             case 1: entra(sockfd, request, response); break;
-            case 2: esci(sockfd, request, response); break;
+            case 2: stampaCatalogo(sockfd, request, response); break;
             case 3: aggiungi(sockfd, request, response); break;
             case 4: rimuovi(sockfd, request, response); break;
             case 5: stampa(sockfd, request, response); break;
             case 6: mettiInCoda(sockfd, request, response); break;
             case 7: paga(sockfd, request, response); break;
-            case 8: stampaCatalogo(sockfd, request, response); break;
-            case 9: close(sockfd); exit(0);
+            case 8: esci(sockfd, request, response); exit(0);
         }
+        printf("Richiesta: %s\n", request);
+        printf("Risposta: %s\n", response);
+        memset(response, 0, MAX_RESPONSE_SIZE);
         printf("Premi invio per continuare...");
         getchar();
         getchar();
@@ -107,14 +108,13 @@ int getScelta() {
 
 void printmenu() {
     printf("1. Entra nel negozio\n");
-    printf("2. Esci dal negozio\n");
+    printf("2. Stampa catalogo\n");
     printf("3. Aggiungi un prodotto al carrello\n");
     printf("4. Rimuovi un prodotto dal carrello\n");
     printf("5. Stampa il carrello\n");
     printf("6. Mettiti in coda alla cassa\n");
     printf("7. Paga\n");
-    printf("8. Stampa catalogo\n");
-    printf("9. Esci\n");
+    printf("8. Esci dal negozio\n");
 }
 
 void entra(int sockfd, char* request, char* response) {
@@ -139,16 +139,36 @@ void stampaCatalogo(int sockfd, char* request, char* response) {
     printf("%s\n", response);
 }
 
+
 void aggiungi(int sockfd, char* request, char* response) {
     int id_prodotto;
     char nome_prodotto[50];
     float prezzo_prodotto;
+    printf("1. Pasta\n");
+    printf("2. Latte\n");
+    printf("3. Pane\n");
+    printf("4. Salsa di pomodoro\n");
+    printf("5. Pollo\n");
+    printf("6. Uova\n");
+    printf("7. Banane\n");
+    printf("8. Yogurt\n");
+    printf("9. Cereali\n");
+    printf("10. Acqua minerale\n");
+
     printf("Inserisci l'ID del prodotto: ");
     scanf("%d", &id_prodotto);
-    printf("Inserisci il nome del prodotto: ");
-    scanf("%s", nome_prodotto);
-    printf("Inserisci il prezzo del prodotto: ");
-    scanf("%f", &prezzo_prodotto);
+    switch (id_prodotto) {
+        case 1: strcpy(nome_prodotto, "Pasta"); prezzo_prodotto = 1.99; break;
+        case 2: strcpy(nome_prodotto, "Latte"); prezzo_prodotto = 0.99; break;
+        case 3: strcpy(nome_prodotto, "Pane"); prezzo_prodotto = 2.49; break;
+        case 4: strcpy(nome_prodotto, "Salsa di pomodoro"); prezzo_prodotto = 1.79; break;
+        case 5: strcpy(nome_prodotto, "Pollo"); prezzo_prodotto = 5.99; break;
+        case 6: strcpy(nome_prodotto, "Uova"); prezzo_prodotto = 2.29; break;
+        case 7: strcpy(nome_prodotto, "Banane"); prezzo_prodotto = 0.69; break;
+        case 8: strcpy(nome_prodotto, "Yogurt"); prezzo_prodotto = 1.49; break;
+        case 9: strcpy(nome_prodotto, "Cereali"); prezzo_prodotto = 3.99; break;
+        case 10: strcpy(nome_prodotto, "Acqua minerale"); prezzo_prodotto = 0.89; break;
+    }
     sprintf(request, "cliente:%d:aggiungi\n:%d:%s:%f", id, id_prodotto, nome_prodotto, prezzo_prodotto);
     send_request(sockfd, request);
     read_response(sockfd, response);
