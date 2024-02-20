@@ -3,11 +3,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
-#include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <semaphore.h>
+#include <sys/socket.h>
 
 #include "carrello.h"
 #include "cliente.h"
