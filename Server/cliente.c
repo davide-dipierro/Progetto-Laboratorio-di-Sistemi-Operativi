@@ -55,13 +55,11 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t
     }
     rimuovi_cliente_coda_ingresso(coda_ingresso);
     incrementa_n_clienti();
-    //printf("Cliente entrato, clienti in negozio: %d\n", get_n_clienti());
     int i = 0;
     while(i < VARIABILE_C && carrelli[i].status != LIBERO) i++;
+    pthread_mutex_lock(&carrelli[i].mutex);
     carrelli[i].status = IN_NEGOZIO;
     carrelli[i].ultima_operazione = time(NULL);
-    pthread_mutex_lock(&carrelli[i].mutex);
-    //printf("Carrello %d assegnato al cliente\n", i);
     sprintf(response, "ID_carrello:%d\n", i);
     *id = i;
 }
