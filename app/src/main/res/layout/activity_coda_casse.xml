@@ -4,39 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StartActivity">
+    tools:context=".CodaCasseActivity">
 
-    <Button
-        android:id="@+id/enter_button"
+    <TextView
+        android:id="@+id/textViewCoda"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="enter_market"
-        android:text="Entra nel supermercato"
+        android:text="Caricamento coda"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progressBarCoda"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enter_button" />
-
-    <TextView
-        android:id="@+id/textViewCodaIngresso"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Caricamento posizione in coda..."
-        android:visibility="invisible"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
-
+        app:layout_constraintTop_toBottomOf="@+id/textViewCoda" />
 </androidx.constraintlayout.widget.ConstraintLayout>

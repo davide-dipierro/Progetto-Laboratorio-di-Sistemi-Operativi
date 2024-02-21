@@ -37,7 +37,7 @@ public class ProdottoAdapter extends ArrayAdapter<Prodotto> {
         TextView textViewId = convertView.findViewById(R.id.textViewId);
         TextView textViewNome = convertView.findViewById(R.id.textViewNome);
         TextView textViewPrezzo = convertView.findViewById(R.id.textViewPrezzo);
-        Button buttonDettagli = convertView.findViewById(R.id.buttonDettagli);
+        Button buttonAggiungi = convertView.findViewById(R.id.buttonAggiungi);
 
         // Imposta i valori degli attributi del prodotto nei TextView
         textViewId.setText("ID: " + prodotto.getId());
@@ -45,7 +45,7 @@ public class ProdottoAdapter extends ArrayAdapter<Prodotto> {
         textViewPrezzo.setText("Prezzo: " + prodotto.getPrezzo());
 
         // Gestisci il clic sul pulsante (puoi aggiungere qui la logica desiderata)
-        buttonDettagli.setOnClickListener(new View.OnClickListener() {
+        buttonAggiungi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ClientTask clientTask = new ClientTask(mainActivity, "cliente:"+ id +":aggiungi\n:" + prodotto.getId() + ":" + prodotto.getNome() + ":" + prodotto.getPrezzo());

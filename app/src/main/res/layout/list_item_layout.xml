@@ -27,7 +27,7 @@
         android:text="Prezzo: " />
 
     <Button
-        android:id="@+id/buttonDettagli"
+        android:id="@+id/buttonAggiungi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Aggiungi"
