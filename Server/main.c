@@ -92,6 +92,7 @@ void* process(void * ptr) {
 
     // Leggo la richiesta del client
     read_request(socket, request);
+    printf("Request received: %s\n", request);
 
     // Processo la richiesta
     if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli, &coda_casse, &coda_ingresso);

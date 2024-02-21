@@ -22,5 +22,6 @@ void clienteStampa(int, char*, carrello_t*);
 void clienteSiMetteInCodaAllaCassa(int, char*, carrello_t*, coda_casse_t*);
 void clientePaga(int, char*, carrello_t*);
 void clienteEntraInCodaIngresso(int, char*, coda_ingresso_t*);
+bool puoEntrare(coda_ingresso_t*);
 
 #endif

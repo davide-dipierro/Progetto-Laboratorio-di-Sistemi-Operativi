@@ -55,7 +55,7 @@ void stampa_carrello(carrello_t* carrello) {
     nodo_t_carr* nodo_carr_corrente = carrello->head;
 
     while (nodo_carr_corrente != NULL) {
-        printf("ID: %d, Nome: %s, Prezzo: %.2f\n", nodo_carr_corrente->prodotto.id, nodo_carr_corrente->prodotto.nome, nodo_carr_corrente->prodotto.prezzo);
+        //printf("ID: %d, Nome: %s, Prezzo: %.2f\n", nodo_carr_corrente->prodotto.id, nodo_carr_corrente->prodotto.nome, nodo_carr_corrente->prodotto.prezzo);
         nodo_carr_corrente = nodo_carr_corrente->next;
     }
 }

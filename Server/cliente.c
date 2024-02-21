@@ -25,7 +25,7 @@ void decrementa_n_clienti(){
 }
 
 void clienteParser(char* request, char* response, carrello_t* carrelli, coda_casse_t* coda_casse, coda_ingresso_t* coda_ingresso){
-    //printf("Richiesta: %s\n", request);
+    printf("Richiesta: %s\n", request);
     int id;
     char comando[10];
     char dati[100];
@@ -49,47 +49,59 @@ void clienteParser(char* request, char* response, carrello_t* carrelli, coda_cas
 }
 
 void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t* coda_ingresso){
-    rimuovi_cliente_coda_ingresso_id(*id, coda_ingresso);
+    if(!puoEntrare(coda_ingresso)) {
+        sprintf(response, "Non puoi entrare\n");
+        return;
+    }
+    rimuovi_cliente_coda_ingresso(coda_ingresso);
     incrementa_n_clienti();
-    printf("Cliente entrato, clienti in negozio: %d\n", get_n_clienti());
+    //printf("Cliente entrato, clienti in negozio: %d\n", get_n_clienti());
     int i = 0;
     while(i < VARIABILE_C && carrelli[i].status != LIBERO) i++;
-    if(i < VARIABILE_C){
-        carrelli[i].status = IN_NEGOZIO;
-        carrelli[i].ultima_operazione = time(NULL);
-        pthread_mutex_lock(&carrelli[i].mutex);
-        printf("Carrello %d assegnato al cliente\n", i);
-        sprintf(response, "ID_carrello:%d\n", i);
-        *id = i;
-    }else{
-        printf("Non ci sono carrelli disponibili\n");
-        strcpy(response, "Non ci sono carrelli disponibili\n\0");
+    carrelli[i].status = IN_NEGOZIO;
+    carrelli[i].ultima_operazione = time(NULL);
+    pthread_mutex_lock(&carrelli[i].mutex);
+    //printf("Carrello %d assegnato al cliente\n", i);
+    sprintf(response, "ID_carrello:%d\n", i);
+    *id = i;
+}
+
+bool puoEntrare(coda_ingresso_t* coda_ingresso){
+    int Num = get_n_clienti();
+    int fila = numero_clienti_coda_ingresso(coda_ingresso);
+    if (
+        ((Num<VARIABILE_C-VARIABILE_E) || 
+        (((Num>=VARIABILE_C-VARIABILE_E) && (fila>=VARIABILE_E)) ||
+        ((fila>=VARIABILE_C-Num) && (fila<VARIABILE_E)))) && (Num<=VARIABILE_C)
+    ) {
+        return true;
     }
+    return false;
 }
 
 void clienteEntraInCodaIngresso(int id, char* response, coda_ingresso_t* coda_ingresso){
-    printf("Cliente %d entra in coda\n", id);
+    //printf("Cliente %d entra in coda\n", id);
     if(id < 0) {
         id = numero_chiocciola; numero_chiocciola++;
-        printf("Cliente %d entra in coda\n", id);
+        //printf("Cliente %d entra in coda\n", id);
         aggiungi_cliente_coda_ingresso(id, coda_ingresso);
     }
-    printf("Cliente %d entra in coda\n", id);
+    //printf("Cliente %d entra in coda\n", id);
     int position = posizione_cliente_coda_ingresso(id, coda_ingresso);
-    printf("Posizione: %d\n", position);
-    printf("ID_cliente:%d:%d\n", id, position);    
+    //printf("Posizione: %d\n", position);
+    //printf("ID_cliente:%d:%d\n", id, position);    
     sprintf(response, "ID_cliente:%d:%d\n", id, position);
 }
 
 void clienteEsce(int id, char* response, carrello_t* carrelli){
     if ( carrelli[id].status == PAGATO ) {
-        printf("Cliente uscito, clienti in negozio: %d\n", get_n_clienti());
+        //printf("Cliente uscito, clienti in negozio: %d\n", get_n_clienti());
         svuota_carrello(&carrelli[id]);
         carrelli[id].status = LIBERO;
         decrementa_n_clienti();
         strcpy(response, "Sei uscito dal negozio\n\0");
     } else {
-        printf("Richiesta su carrello %d non in pagamento\n", id);
+        //printf("Richiesta su carrello %d non in pagamento\n", id);
         strcpy(response, "Sessione scaduta\n\0");
     }
     
@@ -106,10 +118,10 @@ void clienteAggiunge(int id, char* request, char* response, carrello_t* carrelli
     prodotto.prezzo = prezzo_prodotto;
     if(carrelli[id].status == IN_NEGOZIO) {
         aggiungi_prodotto(&carrelli[id], prodotto);
-        printf("Prodotto %d aggiunto al carrello %d\n", id_prodotto, id);
+        //printf("Prodotto %d aggiunto al carrello %d\n", id_prodotto, id);
         strcpy(response, "ok\n\0");
     } else {
-        printf("Richiesta su carrello %d non in negozio\n", id);
+        //printf("Richiesta su carrello %d non in negozio\n", id);
         strcpy(response, "Sessione scaduta\n\0");
     }
 }
@@ -118,27 +130,27 @@ void clienteRimuove(int id, char* request, char* response, carrello_t* carrelli)
     int id_prodotto;
     sscanf(request, "cliente:%d:rimuovi\n%d", &id, &id_prodotto);
     rimuovi_prodotto(&carrelli[id], id_prodotto);
-    printf("Prodotto %d rimosso dal carrello %d\n", id_prodotto, id);
+    //printf("Prodotto %d rimosso dal carrello %d\n", id_prodotto, id);
     strcpy(response, "Prodotto rimosso dal carrello\n\0");
 }
 
 void clienteStampa(int id, char* response, carrello_t* carrelli){
-    printf("Stampa carrello %d\n", id);
+    //printf("Stampa carrello %d\n", id);
     stampa_carrello(&carrelli[id]);
     sprintf(response, "Totale: %.2f\n", calcola_totale(&carrelli[id]));
 }
 
 void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli, coda_casse_t* casse){
-    printf("Cliente %d si mette in coda\n", id);
+    //printf("Cliente %d si mette in coda\n", id);
     if(carrelli[id].n_prodotti == 0) {
         sprintf(response, "0\n");
         return;
     }
-    printf("Status: %d == %d\n", carrelli[id].status, IN_NEGOZIO);
+    //printf("Status: %d == %d\n", carrelli[id].status, IN_NEGOZIO);
     if(carrelli[id].status == IN_NEGOZIO) {
         aggiungi_cliente_coda(id, casse);
         carrelli[id].status = IN_CODA;
-        printf("Cliente %d si è messo in coda alle casse\n", id);
+        //printf("Cliente %d si è messo in coda alle casse\n", id);
     }
     int position = posizione_cliente_coda(id, casse);
     if(position == 0 && carrelli[id].status == IN_CODA) {

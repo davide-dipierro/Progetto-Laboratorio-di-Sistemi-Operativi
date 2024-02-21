@@ -18,11 +18,11 @@ void* aspettaFila(void* ptr) {
         pthread_t thread_elabora_carrello;
         pthread_mutex_lock(&mutex_coda_casse);
         if(coda_casse->head != NULL) { 
-            printf("C'è qualcuno in fila\n");
+            //printf("C'è qualcuno in fila\n");
             pthread_mutex_unlock(&mutex_coda_casse);
             if(pthread_create(&thread_elabora_carrello, NULL, elaboraCarrello, (void*)cassiere) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
             pthread_join(thread_elabora_carrello, NULL);
-            printf("Elaborato carrello\n");
+            //printf("Elaborato carrello\n");
         } else {
             pthread_mutex_unlock(&mutex_coda_casse);
         }
@@ -32,7 +32,7 @@ void* aspettaFila(void* ptr) {
 }
 
 void* elaboraCarrello(void* ptr) {
-    printf("Elaboro carrello\n");
+    //printf("Elaboro carrello\n");
     cassiere_t* cassiere = (cassiere_t*)ptr;
     carrello_t* carrelli = cassiere->carrelli;
     coda_casse_t* coda_casse = cassiere->coda_casse;
