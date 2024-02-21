@@ -16,6 +16,10 @@
 #include "cassiere.h"
 #include "codaIngresso.h"
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9756240 (Aggiornamenti al file main.c e Documentazione.docx)
 carrello_t carrelli[VARIABILE_C];
 coda_casse_t coda_casse;
 coda_ingresso_t coda_ingresso;
