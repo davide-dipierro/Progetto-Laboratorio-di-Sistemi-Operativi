@@ -1,5 +1,9 @@
-#ifndef MAX_CLIENTI
-#define MAX_CLIENTI 5
+#ifndef VARIABILE_C
+#define VARIABILE_C 8
+#endif
+
+#ifndef VARIABILE_E
+#define VARIABILE_E 3
 #endif
 
 #ifndef N_CASSE

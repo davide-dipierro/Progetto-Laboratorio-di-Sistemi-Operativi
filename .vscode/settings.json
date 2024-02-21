@@ -9,7 +9,9 @@
         "cassiere.h": "c",
         "config.h": "c",
         "cliente.h": "c",
-        "carrello.h": "c"
+        "carrello.h": "c",
+        "unistd.h": "c",
+        "codaingresso.h": "c"
     },
     "sonarlint.connectedMode.project": {
         "connectionId": "http-home-davidedipierro-it-9000-",

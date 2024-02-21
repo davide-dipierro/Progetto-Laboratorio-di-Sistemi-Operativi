@@ -73,7 +73,7 @@ float calcola_totale(carrello_t* carrello) {
 }
 
 void inizializza_carrelli(carrello_t* carrelli) {
-    for (int i = 0; i < MAX_CLIENTI; i++) {
+    for (int i = 0; i < VARIABILE_C; i++) {
         carrelli[i].status = LIBERO;
         carrelli[i].n_prodotti = 0;
         carrelli[i].head = NULL;

@@ -19,12 +19,14 @@ typedef struct nodo {
     struct nodo* next;
 } nodo_t;
 
+/*
 // Struttura dati per la cassa
 typedef struct {
     int id; // Identificativo della cassa
     bool aperta; // Stato della cassa
     int cliente; // Stato della cassa (-1 = non c'è gente)
 } cassa_t;
+*/
 
 // Struttura dati per la coda alle casse
 typedef struct {

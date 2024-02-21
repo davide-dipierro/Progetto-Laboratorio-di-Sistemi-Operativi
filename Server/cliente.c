@@ -2,6 +2,7 @@
 
 extern pthread_mutex_t mutex_n_clienti;
 int n_clienti = 0;
+int numero_chiocciola = 0;
 
 int get_n_clienti(){
     int n;
@@ -23,15 +24,16 @@ void decrementa_n_clienti(){
     pthread_mutex_unlock(&mutex_n_clienti);
 }
 
-void clienteParser(char* request, char* response, carrello_t* carrelli, coda_casse_t* coda_casse){
-    printf("Richiesta: %s\n", request);
+void clienteParser(char* request, char* response, carrello_t* carrelli, coda_casse_t* coda_casse, coda_ingresso_t* coda_ingresso){
+    //printf("Richiesta: %s\n", request);
     int id;
     char comando[10];
     char dati[100];
     sscanf(request, "cliente:%d:%s\n:%s", &id, comando, dati);
     printf("Comando: %s\n", comando);
-    printf("Dati: %s\n", dati);
-    if(strcmp(comando, "entra") == 0) clienteEntra(&id, response, carrelli);
+    //printf("Dati: %s\n", dati);
+    if(strcmp(comando, "entra") == 0) clienteEntra(&id, response, carrelli, coda_ingresso);
+    else if(strcmp(comando, "ingresso") == 0) clienteEntraInCodaIngresso(id, response, coda_ingresso);
     else if(carrelli[id].status == LIBERO) { strcpy(response, "Sessione scaduta\n\0"); return; }
     else if(strcmp(comando, "esce") == 0) clienteEsce(id, response, carrelli);
     else if(strcmp(comando, "aggiungi") == 0) clienteAggiunge(id, request, response, carrelli);
@@ -41,16 +43,18 @@ void clienteParser(char* request, char* response, carrello_t* carrelli, coda_cas
     else if(strcmp(comando, "paga") == 0) clientePaga(id, response, carrelli);
     else strcpy(response, "Comando non riconosciuto\n\0");
 
-    if(strcmp(comando, "esce") != 0) carrelli[id].ultima_operazione = time(NULL);
-    // TODO: Per il momento non c'è la coda per entrare nel negozio
+    if(strcmp(comando, "esce") != 0 && strcmp(comando, "ingresso") != 0) {
+        carrelli[id].ultima_operazione = time(NULL);
+    }
 }
 
-void clienteEntra(int* id, char* response, carrello_t* carrelli){
+void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t* coda_ingresso){
+    rimuovi_cliente_coda_ingresso_id(*id, coda_ingresso);
     incrementa_n_clienti();
     printf("Cliente entrato, clienti in negozio: %d\n", get_n_clienti());
     int i = 0;
-    while(i < MAX_CLIENTI && carrelli[i].status != LIBERO) i++;
-    if(i < MAX_CLIENTI){
+    while(i < VARIABILE_C && carrelli[i].status != LIBERO) i++;
+    if(i < VARIABILE_C){
         carrelli[i].status = IN_NEGOZIO;
         carrelli[i].ultima_operazione = time(NULL);
         pthread_mutex_lock(&carrelli[i].mutex);
@@ -61,6 +65,20 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli){
         printf("Non ci sono carrelli disponibili\n");
         strcpy(response, "Non ci sono carrelli disponibili\n\0");
     }
+}
+
+void clienteEntraInCodaIngresso(int id, char* response, coda_ingresso_t* coda_ingresso){
+    printf("Cliente %d entra in coda\n", id);
+    if(id < 0) {
+        id = numero_chiocciola; numero_chiocciola++;
+        printf("Cliente %d entra in coda\n", id);
+        aggiungi_cliente_coda_ingresso(id, coda_ingresso);
+    }
+    printf("Cliente %d entra in coda\n", id);
+    int position = posizione_cliente_coda_ingresso(id, coda_ingresso);
+    printf("Posizione: %d\n", position);
+    printf("ID_cliente:%d:%d\n", id, position);    
+    sprintf(response, "ID_cliente:%d:%d\n", id, position);
 }
 
 void clienteEsce(int id, char* response, carrello_t* carrelli){
@@ -111,7 +129,7 @@ void clienteStampa(int id, char* response, carrello_t* carrelli){
 }
 
 void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli, coda_casse_t* casse){
-    printf("Cliente %d si mette in coda CHIAMATA\n", id);
+    printf("Cliente %d si mette in coda\n", id);
     if(carrelli[id].n_prodotti == 0) {
         sprintf(response, "0\n");
         return;

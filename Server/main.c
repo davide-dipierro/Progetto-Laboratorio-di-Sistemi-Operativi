@@ -14,9 +14,12 @@
 #include "codaCassa.h"
 #include "config.h"
 #include "cassiere.h"
+#include "codaIngresso.h"
 
-carrello_t carrelli[MAX_CLIENTI];
+carrello_t carrelli[VARIABILE_C];
 coda_casse_t coda_casse;
+coda_ingresso_t coda_ingresso;
+pthread_mutex_t mutex_coda_ingresso;
 pthread_mutex_t mutex_coda_casse;
 pthread_mutex_t mutex_n_clienti;
 
@@ -39,7 +42,6 @@ void* ui();
 void stampa_stickman(int num_stickman);
 
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
-int n_cassieri = 0;
 
 int main() {
     printf("Inizializzo carrelli\n");
@@ -53,8 +55,8 @@ int main() {
     pthread_t thread_pulisci_carrelli;
     if(pthread_create(&thread_pulisci_carrelli, NULL, riordinaCarrelli, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     //printf("Thread pulizia carrelli creato\n");
-    pthread_t thread_ui;
-    if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+    //pthread_t thread_ui;
+    //if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     //printf("Thread UI creato\n");
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
@@ -85,11 +87,14 @@ void* process(void * ptr) {
     char request[MAX_REQUEST_SIZE];
     char response[MAX_RESPONSE_SIZE];
 
+    memset(request, 0, MAX_REQUEST_SIZE);
+    memset(response, 0, MAX_RESPONSE_SIZE);
+
     // Leggo la richiesta del client
     read_request(socket, request);
 
     // Processo la richiesta
-    if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli, &coda_casse);
+    if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli, &coda_casse, &coda_ingresso);
     else if(strstr(request, "cassiere") != NULL) printf("Richiesta cassiere\n");
     else if(strstr(request, "catalogo") != NULL) inviaCatalogo(response);
     else printf("Richiesta non valida\n"); 
@@ -97,6 +102,7 @@ void* process(void * ptr) {
 
     // Invio la risposta al client
     send_response(socket, response);
+    printf("Response sent: %s\n", response);
 
     close(socket);
     return NULL;
@@ -131,7 +137,7 @@ void* riordinaCarrelli() {
     while(1) {
         sleep(TIMER_PULIZIA_CARRELLI); 
         printf("Riordino carrelli\n");
-        for(int i = 0; i < MAX_CLIENTI; i++) {
+        for(int i = 0; i < VARIABILE_C; i++) {
             if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + TIMER_PULIZIA_CARRELLI < time(NULL)) {
                 printf("Carrello %d riordinato\n", i);
                 svuota_carrello(&carrelli[i]);
@@ -148,7 +154,7 @@ void* ui(){
         printf("\033[H\033[J");
         printf("\nIN NEGOZIO:\n");
         int persone = 0;
-        for(int i = 0; i < MAX_CLIENTI; i++) {
+        for(int i = 0; i < VARIABILE_C; i++) {
             if (carrelli[i].status == IN_NEGOZIO) {
                 persone++;
             }
@@ -157,7 +163,7 @@ void* ui(){
         persone = 0;
         printf("IN CODA:\n");
         fflush(stdout);
-        for(int i = 0; i < MAX_CLIENTI; i++) {
+        for(int i = 0; i < VARIABILE_C; i++) {
             if (carrelli[i].status == IN_CODA) {
                 persone++;
             }
@@ -165,7 +171,7 @@ void* ui(){
         stampa_stickman(persone);
         persone = 0;
         printf("IN CASSA:\n");
-        for(int i = 0; i < MAX_CLIENTI; i++) {
+        for(int i = 0; i < VARIABILE_C; i++) {
             if (carrelli[i].status == IN_CASSA || carrelli[i].status == PAGAMENTO) {
                 persone++;
             }

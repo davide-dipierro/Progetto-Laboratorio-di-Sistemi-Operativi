@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
 
-SRCS = main.c cliente.c codaCassa.c carrello.c cassiere.c codaIngresso.c
+SRCS = main.c codaCassa.c carrello.c cassiere.c codaIngresso.c cliente.c
 OBJS = $(SRCS:.c=.o)
 TARGET = server
 
