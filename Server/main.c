@@ -16,6 +16,7 @@
 #include "cassiere.h"
 #include "codaIngresso.h"
 
+//ciao
 carrello_t carrelli[VARIABILE_C];
 coda_casse_t coda_casse;
 coda_ingresso_t coda_ingresso;
