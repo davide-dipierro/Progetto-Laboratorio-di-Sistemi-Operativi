@@ -86,12 +86,19 @@ void inizializza_carrelli(carrello_t* carrelli) {
 
 void svuota_carrello(carrello_t* carrello) {
     nodo_t_carr* nodo_carr_corrente = carrello->head;
+    nodo_t_carr* nodo_carr_successivo = NULL;
 
     while (nodo_carr_corrente != NULL) {
-        rimuovi_prodotto(carrello, nodo_carr_corrente->prodotto.id);
-        nodo_carr_corrente = nodo_carr_corrente->next;
-    }
+        // Salva il puntatore al prossimo nodo
+        nodo_carr_successivo = nodo_carr_corrente->next;
 
+        // Rimuovi il nodo corrente
+        rimuovi_prodotto(carrello, nodo_carr_corrente->prodotto.id);
+
+        // Avanza al nodo successivo
+        nodo_carr_corrente = nodo_carr_successivo;
+    }
 }
+
 
 

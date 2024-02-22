@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -fsanitize=address
 
 SRCS = main.c codaCassa.c carrello.c cassiere.c codaIngresso.c cliente.c
 OBJS = $(SRCS:.c=.o)

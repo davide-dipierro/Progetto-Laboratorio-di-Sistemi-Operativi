@@ -55,9 +55,9 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t
         sprintf(response, "Non puoi entrare\n");
         return;
     }
-    printf("[TEST] Cliente %d può entrare\n", *id);
+    //printf("[TEST] Cliente %d può entrare\n", *id);
     rimuovi_cliente_coda_ingresso(coda_ingresso);
-    printf("[TEST] Cliente %d rimosso dalla coda di ingresso\n", *id);
+    //printf("[TEST] Cliente %d rimosso dalla coda di ingresso\n", *id);
     incrementa_n_clienti();
     int i = 0;
     while(i < VARIABILE_C && carrelli[i].status != LIBERO) i++;
@@ -76,24 +76,26 @@ bool puoEntrare(coda_ingresso_t* coda_ingresso){
         (((Num>=VARIABILE_C-VARIABILE_E) && (fila>=VARIABILE_E)) ||
         ((fila>=VARIABILE_C-Num) && (fila<VARIABILE_E)))) && (Num<=VARIABILE_C)
     ) {
+        printf("[BUTTAFUORI] Può entrare. In negozio: %d, In coda: %d\n", Num, fila);
         return true;
     }
+    printf("[BUTTAFUORI] Non può entrare. In negozio: %d, In coda: %d\n", Num, fila);
     return false;
 }
 
 void clienteEntraInCodaIngresso(int id, char* response, coda_ingresso_t* coda_ingresso){
-    printf("Cliente %d entra in coda\n", id);
+   //printf"Cliente %d entra in coda\n", id);
     if(id < 0) {
         pthread_mutex_lock(&mutex_chiocciola);
         id = numero_chiocciola; numero_chiocciola++;
         pthread_mutex_unlock(&mutex_chiocciola);
-        printf("Cliente %d entra in coda\n", id);
+       //printf"Cliente %d entra in coda\n", id);
         aggiungi_cliente_coda_ingresso(id, coda_ingresso);
     }
-    printf("Cliente %d entra in coda\n", id);
+   //printf"Cliente %d entra in coda\n", id);
     int position = posizione_cliente_coda_ingresso(id, coda_ingresso);
-    printf("Posizione: %d\n", position);
-    printf("ID_cliente:%d:%d\n", id, position);    
+   //printf"Posizione: %d\n", position);
+   //printf"ID_cliente:%d:%d\n", id, position);    
     sprintf(response, "ID_cliente:%d:%d\n", id, position);
 }
 
