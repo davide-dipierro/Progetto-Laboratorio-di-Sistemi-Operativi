@@ -134,8 +134,8 @@ void clienteRimuove(int id, char* request, char* response, carrello_t* carrelli)
 
 void clienteStampa(int id, char* response, carrello_t* carrelli){
     //printf("Stampa carrello %d\n", id);
-    stampa_carrello(&carrelli[id]);
-    sprintf(response, "Totale: %.2f\n", calcola_totale(&carrelli[id]));
+    stampa_carrello(response, &carrelli[id]);
+    //sprintf(response, "Totale: %.2f\n", calcola_totale(&carrelli[id]));
 }
 
 void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli, coda_casse_t* casse){

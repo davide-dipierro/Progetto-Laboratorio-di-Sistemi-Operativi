@@ -51,14 +51,15 @@ void rimuovi_prodotto(carrello_t* carrello, int id_prodotto) {
     }
 }
 
-void stampa_carrello(carrello_t* carrello) {
+void stampa_carrello(char* stringa, carrello_t* carrello) {
     nodo_t_carr* nodo_carr_corrente = carrello->head;
 
     while (nodo_carr_corrente != NULL) {
-        //printf("ID: %d, Nome: %s, Prezzo: %.2f\n", nodo_carr_corrente->prodotto.id, nodo_carr_corrente->prodotto.nome, nodo_carr_corrente->prodotto.prezzo);
+        sprintf(stringa, "%s{%d:%s:%f}\n", stringa, nodo_carr_corrente->prodotto.id, nodo_carr_corrente->prodotto.nome, nodo_carr_corrente->prodotto.prezzo);
         nodo_carr_corrente = nodo_carr_corrente->next;
     }
 }
+
 
 float calcola_totale(carrello_t* carrello) {
     int totale = 0;
