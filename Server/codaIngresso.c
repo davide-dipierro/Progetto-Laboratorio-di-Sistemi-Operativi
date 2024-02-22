@@ -2,6 +2,7 @@
 
 void aggiungi_cliente_coda_ingresso(int id_cliente, coda_ingresso_t* coda_ingresso){
     pthread_mutex_lock(&mutex_coda_ingresso); // Lock mutex before accessing the queue
+    printf("Aggiungo %d alla coda di ingresso\n", id_cliente);
     nodoIngresso_t* nuovo_nodoIngresso = (nodoIngresso_t*) malloc(sizeof(nodoIngresso_t));
     nuovo_nodoIngresso->id_cliente = id_cliente;
     nuovo_nodoIngresso->ultima_operazione = time(NULL);

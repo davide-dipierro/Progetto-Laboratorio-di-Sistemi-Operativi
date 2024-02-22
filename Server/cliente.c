@@ -1,6 +1,8 @@
 #include "cliente.h"
 
 extern pthread_mutex_t mutex_n_clienti;
+extern pthread_mutex_t mutex_chiocciola;
+extern pthread_mutex_t mutex_carrelli;
 int n_clienti = 0;
 int numero_chiocciola = 0;
 
@@ -78,16 +80,18 @@ bool puoEntrare(coda_ingresso_t* coda_ingresso){
 }
 
 void clienteEntraInCodaIngresso(int id, char* response, coda_ingresso_t* coda_ingresso){
-    //printf("Cliente %d entra in coda\n", id);
+    printf("Cliente %d entra in coda\n", id);
     if(id < 0) {
+        pthread_mutex_lock(&mutex_chiocciola);
         id = numero_chiocciola; numero_chiocciola++;
-        //printf("Cliente %d entra in coda\n", id);
+        pthread_mutex_unlock(&mutex_chiocciola);
+        printf("Cliente %d entra in coda\n", id);
         aggiungi_cliente_coda_ingresso(id, coda_ingresso);
     }
-    //printf("Cliente %d entra in coda\n", id);
+    printf("Cliente %d entra in coda\n", id);
     int position = posizione_cliente_coda_ingresso(id, coda_ingresso);
-    //printf("Posizione: %d\n", position);
-    //printf("ID_cliente:%d:%d\n", id, position);    
+    printf("Posizione: %d\n", position);
+    printf("ID_cliente:%d:%d\n", id, position);    
     sprintf(response, "ID_cliente:%d:%d\n", id, position);
 }
 

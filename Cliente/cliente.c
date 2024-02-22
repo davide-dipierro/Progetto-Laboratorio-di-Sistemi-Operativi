@@ -37,36 +37,41 @@ void aggiungi_con_id(char* request, char* response, int id_prodotto);
 void autopilota(char* request, char* response);
 
 int id_carrello =-1;
+int id_cliente =-1;
 
 int main(int argc, char** argv) {
-    //while (1){
-        system("clear");
+    while (1){
+        system("clear");        
 
         char request[MAX_REQUEST_SIZE];
         char response[MAX_RESPONSE_SIZE];
 
-        // int scelta = getScelta();
-        // switch (scelta) {
-        //     case 1: ingresso(sockfd,request,response); break;
-        //     case 2: entra(sockfd, request, response); break;
-        //     case 3: stampaCatalogo(sockfd, request, response); break;
-        //     case 4: aggiungi(sockfd, request, response); break;
-        //     case 5: rimuovi(sockfd, request, response); break;
-        //     case 6: stampa(sockfd, request, response); break;
-        //     case 7: mettiInCoda(sockfd, request, response); break;
-        //     case 8: paga(sockfd, request, response); break;
-        //     case 9: esci(sockfd, request, response); exit(0);
-        // }
-        // printf("Richiesta: %s\n", request);
-        // printf("Risposta: %s\n", response);
-        // memset(response, 0, MAX_RESPONSE_SIZE);
-        // printf("Premi invio per continuare...");
-        // getchar();
-        // getchar();
-
-        autopilota(request,response);
+        if(argc>=1) {
+            autopilota(request, response);
+            exit(0);
+        } else {
+            int scelta = getScelta();
+            switch (scelta) {
+                case 1: ingresso(request,response); break;
+                case 2: entra(request, response); break;
+                case 3: stampaCatalogo(request, response); break;
+                case 4: aggiungi(request, response); break;
+                case 5: rimuovi(request, response); break;
+                case 6: stampa(request, response); break;
+                case 7: mettiInCoda(request, response); break;
+                case 8: paga(request, response); break;
+                case 9: esci(request, response); exit(0);
+            }
+            printf("Richiesta: %s\n", request);
+            printf("Risposta: %s\n", response);
+            memset(response, 0, MAX_RESPONSE_SIZE);
+            printf("Premi invio per continuare...");
+            getchar();
+            getchar();
+    
+        }
                 
-    //}
+    }
     return 0;
 }
 
@@ -94,45 +99,39 @@ int create_socket(){
 }
 
 void autopilota(char* request, char* response){
-    int num,posizione=-1,app;
-    printf("Quanti autopiloti ti servono? ");
-    scanf("%d", &num);
-    pid_t pid;
-     for(int i=0; i<num; i++){
-        if((pid=fork())==0){
-            do{
-                ingresso(request,response);
-                if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
-                sleep(5);
-            }while(posizione!=0);
+    int posizione=-1;
+    int app;
+    do{
+        ingresso(request,response);
+        if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
+        sleep(5);
+    }while(posizione!=0);
 
-            do{
-                entra(request,response);
-                sleep(5);
-            }while(id_carrello==-1);
-                
-            aggiungi_con_id(request,response,1);
-            aggiungi_con_id(request,response,2);
-            aggiungi_con_id(request,response,1);
-            stampa(request,response);
+    do{
+        entra(request,response);
+        sleep(5);
+    }while(id_carrello==-1);
+        
+    aggiungi_con_id(request,response,1);
+    aggiungi_con_id(request,response,2);
+    aggiungi_con_id(request,response,1);
+    //stampa(request,response);
 
-            posizione=-1;
+    posizione=-1;
 
-            do{
-                mettiInCoda(request,response);
-                sscanf(response, "%d\n", &posizione);
-                sleep(5);
-            }while(posizione!=0);
+    do{
+        mettiInCoda(request,response);
+        sscanf(response, "%d\n", &posizione);
+        sleep(5);
+    }while(posizione!=0);
 
-            do{
-                paga(request,response);
-                sleep(5);
-            }while((strcmp(response,"Carrello in elaborazione\n"))==0);
-                
-            esci(request,response);
-            exit(0);
-        }
-    }
+    do{
+        paga(request,response);
+        sleep(5);
+    }while((strcmp(response,"Carrello in elaborazione\n"))==0);
+        
+    esci(request,response);
+    exit(0);
 }
 
 void aggiungi_con_id(char* request, char* response, int id_prodotto){
@@ -196,10 +195,11 @@ void printmenu() {
 
 void ingresso(char* request, char* response){
     int sockfd=create_socket();
-    sprintf(request, "cliente:%d:ingresso\n", id_carrello);
+    sprintf(request, "cliente:%d:ingresso\n", id_cliente);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
+    if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &id_cliente, &id_carrello);
     close(sockfd);
 }
 

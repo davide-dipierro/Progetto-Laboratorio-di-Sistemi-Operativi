@@ -22,6 +22,8 @@ coda_ingresso_t coda_ingresso;
 pthread_mutex_t mutex_coda_ingresso;
 pthread_mutex_t mutex_coda_casse;
 pthread_mutex_t mutex_n_clienti;
+pthread_mutex_t mutex_chiocciola;
+pthread_mutex_t mutex_carrelli;
 
 #define PORT 5050
 #define MAX_CONNECTIONS 10
@@ -39,6 +41,7 @@ void read_request(int socket, char * request);
 void inviaCatalogo(char* response);
 void* riordinaCarrelli();
 void* ui();
+void* buttafuoriAllIngresso();
 void stampa_stickman(int num_stickman);
 
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
@@ -55,6 +58,9 @@ int main() {
     pthread_t thread_pulisci_carrelli;
     if(pthread_create(&thread_pulisci_carrelli, NULL, riordinaCarrelli, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     printf("[SERVER] Thread pulizia carrelli creato\n");
+    pthread_t thread_buttafuori;
+    if(pthread_create(&thread_buttafuori, NULL, buttafuoriAllIngresso, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+    printf("[SERVER] Thread buttafuori creato\n");
     //pthread_t thread_ui;
     //if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     //printf("[SERVER] Thread UI creato\n");
@@ -97,11 +103,11 @@ void* process(void * ptr) {
     if(strstr(request, "cliente") != NULL) {
         printf("[CLIENTE] Request: %s\n", request);
         clienteParser(request, response, carrelli, &coda_casse, &coda_ingresso);
-        printf("[SERVER] Response sent: %s\n", response);
+        printf("[SERVER] Response sent: %s", response);
     } else if(strstr(request, "cassiere") != NULL) {
         printf("[CASSIERE] Request: %s\n", request);
         strcpy(response, "cassiere ok");
-        printf("[SERVER] Response sent: %s\n", response);
+        printf("[SERVER] Response sent: %s", response);
     }
     else if(strstr(request, "catalogo") != NULL) {
         printf("[ANONIMO] Request: %s\n", request);
