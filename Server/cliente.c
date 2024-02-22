@@ -152,7 +152,6 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
     }
     int position = posizione_cliente_coda(id, casse);
     if(position == 0 && carrelli[id].status == IN_CODA) {
-        carrelli[id].status = IN_CASSA;
         pthread_mutex_unlock(&carrelli[id].mutex);
     }
     sprintf(response, "%d\n", position);

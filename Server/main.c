@@ -44,20 +44,20 @@ void stampa_stickman(int num_stickman);
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
 
 int main() {
-    printf("Inizializzo carrelli\n");
+    printf("[SERVER] Inizializzo carrelli\n");
     inizializza_carrelli(carrelli);
+    printf("[SERVER] Entrano i cassieri\n");
     for(int i=0; i<N_CASSE; i++) cassiereEntra(5, 2, carrelli, &coda_casse);
-    printf("Starting server\n");
     int server_socket = 0;
     int client_socket = 0;
     struct sockaddr_in server_address;
     pthread_t thread_client;
     pthread_t thread_pulisci_carrelli;
     if(pthread_create(&thread_pulisci_carrelli, NULL, riordinaCarrelli, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
-    //printf("Thread pulizia carrelli creato\n");
-    //pthread_t thread_ui;
-    //if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
-    //printf("Thread UI creato\n");
+    printf("[SERVER] Thread pulizia carrelli creato\n");
+    pthread_t thread_ui;
+    if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+    printf("[SERVER] Thread UI creato\n");
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;
@@ -68,7 +68,7 @@ int main() {
     if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) perror("Could not bind socket"), exit(EXIT_FAILURE);
     // Ascolto le connessioni in entrata
     if (listen(server_socket, MAX_CONNECTIONS) < 0) perror("Could not listen on socket"), exit(EXIT_FAILURE);
-    printf("Server started\nWaiting for connections...\n");
+    printf("[SERVER] Server inizializzato\n[SERVER] Waiting for connections...\n");
     while (1) {
         client_socket = accept(server_socket, NULL, NULL);
 
@@ -92,18 +92,27 @@ void* process(void * ptr) {
 
     // Leggo la richiesta del client
     read_request(socket, request);
-    printf("Request received: %s\n", request);
 
     // Processo la richiesta
-    if(strstr(request, "cliente") != NULL) clienteParser(request, response, carrelli, &coda_casse, &coda_ingresso);
-    else if(strstr(request, "cassiere") != NULL) printf("Richiesta cassiere\n");
-    else if(strstr(request, "catalogo") != NULL) inviaCatalogo(response);
+    if(strstr(request, "cliente") != NULL) {
+        printf("[CLIENTE] Request: %s\n", request);
+        clienteParser(request, response, carrelli, &coda_casse, &coda_ingresso);
+        printf("[SERVER] Response sent: %s\n", response);
+    } else if(strstr(request, "cassiere") != NULL) {
+        printf("[CASSIERE] Request: %s\n", request);
+        strcpy(response, "cassiere ok");
+        printf("[SERVER] Response sent: %s\n", response);
+    }
+    else if(strstr(request, "catalogo") != NULL) {
+        printf("[ANONIMO] Request: %s\n", request);
+        inviaCatalogo(response);
+        printf("[SERVER] Response sent: catalogo\n");
+    }
     else printf("Richiesta non valida\n"); 
     
 
     // Invio la risposta al client
     send_response(socket, response);
-    printf("Response sent: %s\n", response);
 
     close(socket);
     return NULL;
@@ -137,15 +146,33 @@ void inviaCatalogo(char* response) {
 void* riordinaCarrelli() {
     while(1) {
         sleep(TIMER_PULIZIA_CARRELLI); 
-        printf("Riordino carrelli\n");
+        printf("[NEGRETTO] Riordino carrelli\n");
         for(int i = 0; i < VARIABILE_C; i++) {
             if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + TIMER_PULIZIA_CARRELLI < time(NULL)) {
-                printf("Carrello %d riordinato\n", i);
+                pthread_mutex_lock(&carrelli[i].mutex);
+                printf("[NEGRETTO] Carrello %d riordinato\n", i);
                 svuota_carrello(&carrelli[i]);
                 if(carrelli[i].status == IN_CODA) rimuovi_cliente_coda_id(i, &coda_casse);
                 carrelli[i].status = LIBERO;
                 decrementa_n_clienti();
+                pthread_mutex_unlock(&carrelli[i].mutex);
             }
+        }
+    }
+}
+
+void* buttafuoriAllIngresso(){
+    while(1) {
+        sleep(TIMER_BUTTAFUORI); 
+        printf("[BUTTAFUORI] Controllo se ci sono ancora tutti\n");
+        pthread_mutex_lock(&mutex_coda_ingresso);
+        nodoIngresso_t* nodoIngresso_corrente = coda_ingresso.head;
+        while(nodoIngresso_corrente != NULL) {
+            if(nodoIngresso_corrente->ultima_operazione + TIMER_BUTTAFUORI < time(NULL)) {
+                printf("[BUTTAFUORI] Butto fuori %d\n", nodoIngresso_corrente->id_cliente);
+                rimuovi_cliente_coda_ingresso_id(nodoIngresso_corrente->id_cliente, &coda_ingresso);
+            }
+            nodoIngresso_corrente = nodoIngresso_corrente->next;
         }
     }
 }

@@ -17,6 +17,7 @@ extern pthread_mutex_t mutex_coda_ingresso;
 // Nodo della coda
 typedef struct nodoIngresso {
     int id_cliente;
+    time_t ultima_operazione;
     struct nodoIngresso* next;
 } nodoIngresso_t;
 

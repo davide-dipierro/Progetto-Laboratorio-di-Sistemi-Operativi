@@ -4,6 +4,7 @@ void aggiungi_cliente_coda_ingresso(int id_cliente, coda_ingresso_t* coda_ingres
     pthread_mutex_lock(&mutex_coda_ingresso); // Lock mutex before accessing the queue
     nodoIngresso_t* nuovo_nodoIngresso = (nodoIngresso_t*) malloc(sizeof(nodoIngresso_t));
     nuovo_nodoIngresso->id_cliente = id_cliente;
+    nuovo_nodoIngresso->ultima_operazione = time(NULL);
     nuovo_nodoIngresso->next = NULL;
     if(coda_ingresso->head == NULL){
         coda_ingresso->head = nuovo_nodoIngresso;
@@ -76,6 +77,7 @@ int posizione_cliente_coda_ingresso(int id_cliente, coda_ingresso_t* coda_ingres
     int count = 0;
     while(nodoIngresso_corrente != NULL){
         if(nodoIngresso_corrente->id_cliente == id_cliente){
+            nodoIngresso_corrente->ultima_operazione = time(NULL);
             pthread_mutex_unlock(&mutex_coda_ingresso); // Unlock mutex after accessing the queue
             return count;
         }
