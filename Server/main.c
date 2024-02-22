@@ -180,6 +180,7 @@ void* buttafuoriAllIngresso(){
             }
             nodoIngresso_corrente = nodoIngresso_corrente->next;
         }
+        pthread_mutex_unlock(&mutex_coda_ingresso);
     }
 }
 

@@ -194,12 +194,13 @@ void printmenu() {
 }
 
 void ingresso(char* request, char* response){
+    int position=-1;
     int sockfd=create_socket();
     sprintf(request, "cliente:%d:ingresso\n", id_cliente);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
-    if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &id_cliente, &id_carrello);
+    if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &id_cliente, &position);
     close(sockfd);
 }
 
