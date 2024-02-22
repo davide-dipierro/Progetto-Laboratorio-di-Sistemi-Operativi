@@ -39,7 +39,7 @@ void autopilota(char* request, char* response);
 int id_carrello =-1;
 
 int main(int argc, char** argv) {
-    while (1){
+    //while (1){
         system("clear");
 
         char request[MAX_REQUEST_SIZE];
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
 
         autopilota(request,response);
                 
-    }
+    //}
     return 0;
 }
 
@@ -94,33 +94,45 @@ int create_socket(){
 }
 
 void autopilota(char* request, char* response){
-    int num,posizione=-1,app,id;
-    //printf("Quanti autopiloti ti servono? ");
-    //scanf("%d", &num);
-    //pid_t pid[10];
-    // for(int i=0; i<num; i++){
-    //     if((pid[i]=fork())==0){
-        do{
-            ingresso(request,response);
-            if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
-            sleep(5);
-        }while(posizione!=0);
+    int num,posizione=-1,app;
+    printf("Quanti autopiloti ti servono? ");
+    scanf("%d", &num);
+    pid_t pid;
+     for(int i=0; i<num; i++){
+        if((pid=fork())==0){
+            do{
+                ingresso(request,response);
+                if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
+                sleep(5);
+            }while(posizione!=0);
 
-        do{
-            entra(request,response);
-            sleep(5);
-        }while(id_carrello==-1);
-             
-            
+            do{
+                entra(request,response);
+                sleep(5);
+            }while(id_carrello==-1);
+                
             aggiungi_con_id(request,response,1);
             aggiungi_con_id(request,response,2);
             aggiungi_con_id(request,response,1);
             stampa(request,response);
-            mettiInCoda(request,response);
-            paga(request,response);
+
+            posizione=-1;
+
+            do{
+                mettiInCoda(request,response);
+                sscanf(response, "%d\n", &posizione);
+                sleep(5);
+            }while(posizione!=0);
+
+            do{
+                paga(request,response);
+                sleep(5);
+            }while((strcmp(response,"Carrello in elaborazione\n"))==0);
+                
+            esci(request,response);
             exit(0);
-    //     }
-    // }
+        }
+    }
 }
 
 void aggiungi_con_id(char* request, char* response, int id_prodotto){
@@ -151,6 +163,7 @@ void send_request(int socket, char * request) {
 }
 
 void read_response(int socket, char * response) {
+    memset(response, 0, MAX_RESPONSE_SIZE);
     if(read(socket, response, MAX_RESPONSE_SIZE) == -1) perror("Read"), exit(1);
 }
 

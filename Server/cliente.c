@@ -25,12 +25,12 @@ void decrementa_n_clienti(){
 }
 
 void clienteParser(char* request, char* response, carrello_t* carrelli, coda_casse_t* coda_casse, coda_ingresso_t* coda_ingresso){
-    printf("Richiesta: %s\n", request);
+    //printf("Richiesta: %s\n", request);
     int id;
     char comando[10];
     char dati[100];
     sscanf(request, "cliente:%d:%s\n:%s", &id, comando, dati);
-    printf("Comando: %s\n", comando);
+    //printf("Comando: %s\n", comando);
     //printf("Dati: %s\n", dati);
     if(strcmp(comando, "entra") == 0) clienteEntra(&id, response, carrelli, coda_ingresso);
     else if(strcmp(comando, "ingresso") == 0) clienteEntraInCodaIngresso(id, response, coda_ingresso);
