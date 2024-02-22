@@ -55,9 +55,9 @@ int main() {
     pthread_t thread_pulisci_carrelli;
     if(pthread_create(&thread_pulisci_carrelli, NULL, riordinaCarrelli, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     printf("[SERVER] Thread pulizia carrelli creato\n");
-    pthread_t thread_ui;
-    if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
-    printf("[SERVER] Thread UI creato\n");
+    //pthread_t thread_ui;
+    //if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+    //printf("[SERVER] Thread UI creato\n");
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;

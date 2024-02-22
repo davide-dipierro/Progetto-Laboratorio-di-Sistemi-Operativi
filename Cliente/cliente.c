@@ -24,64 +24,127 @@ void read_response(int socket, char * response);
 int getScelta();
 void printmenu();
 
-void entra(int sockfd, char* request, char* response);
-void esci(int sockfd, char* request, char* response);
-void aggiungi(int sockfd, char* request, char* response);
-void rimuovi(int sockfd, char* request, char* response);
-void stampa(int sockfd, char* request, char* response);
-void mettiInCoda(int sockfd, char* request, char* response);
-void paga(int sockfd, char* request, char* response);
-void stampaCatalogo(int sockfd, char* request, char* response);
+void ingresso(char* request, char* response);
+void entra(char* request, char* response);
+void esci(char* request, char* response);
+void aggiungi(char* request, char* response);
+void rimuovi(char* request, char* response);
+void stampa(char* request, char* response);
+void mettiInCoda(char* request, char* response);
+void paga(char* request, char* response);
+void stampaCatalogo(char* request, char* response);
+void aggiungi_con_id(char* request, char* response, int id_prodotto);
+void autopilota(char* request, char* response);
 
-int id=-1;
+int id =-1;
 
 int main(int argc, char** argv) {
     while (1){
         system("clear");
-        int sockfd;
-        struct sockaddr_in server_address;
-
-        // Create socket
-        if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-            perror("Socket creation failed");
-            exit(1);
-        }
-
-        // Set server address
-        server_address.sin_family = AF_INET;
-        server_address.sin_port = htons(5050);
-        server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-        // Connect to server
-        if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) {
-            perror("Connection failed");
-            exit(1);
-        }
 
         char request[MAX_REQUEST_SIZE];
         char response[MAX_RESPONSE_SIZE];
 
-        int scelta = getScelta();
-        switch (scelta) {
-            case 1: entra(sockfd, request, response); break;
-            case 2: stampaCatalogo(sockfd, request, response); break;
-            case 3: aggiungi(sockfd, request, response); break;
-            case 4: rimuovi(sockfd, request, response); break;
-            case 5: stampa(sockfd, request, response); break;
-            case 6: mettiInCoda(sockfd, request, response); break;
-            case 7: paga(sockfd, request, response); break;
-            case 8: esci(sockfd, request, response); exit(0);
-        }
-        printf("Richiesta: %s\n", request);
-        printf("Risposta: %s\n", response);
-        memset(response, 0, MAX_RESPONSE_SIZE);
-        printf("Premi invio per continuare...");
-        getchar();
-        getchar();
+        // int scelta = getScelta();
+        // switch (scelta) {
+        //     case 1: ingresso(sockfd,request,response); break;
+        //     case 2: entra(sockfd, request, response); break;
+        //     case 3: stampaCatalogo(sockfd, request, response); break;
+        //     case 4: aggiungi(sockfd, request, response); break;
+        //     case 5: rimuovi(sockfd, request, response); break;
+        //     case 6: stampa(sockfd, request, response); break;
+        //     case 7: mettiInCoda(sockfd, request, response); break;
+        //     case 8: paga(sockfd, request, response); break;
+        //     case 9: esci(sockfd, request, response); exit(0);
+        // }
+        // printf("Richiesta: %s\n", request);
+        // printf("Risposta: %s\n", response);
+        // memset(response, 0, MAX_RESPONSE_SIZE);
+        // printf("Premi invio per continuare...");
+        // getchar();
+        // getchar();
+
+        autopilota(request,response);
                 
-        close(sockfd);
     }
     return 0;
+}
+
+int create_socket(){
+    int sockfd;
+    struct sockaddr_in server_address;
+
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("Socket creation failed");
+        exit(1);
+    }
+
+    // Set server address
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(5050);
+    server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // Connect to server
+    if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) {
+        perror("Connection failed");
+        exit(1);
+    }
+    
+    return sockfd;
+}
+
+void autopilota(char* request, char* response){
+    int num,posizione=-1,app,id;
+    //printf("Quanti autopiloti ti servono? ");
+    //scanf("%d", &num);
+    //pid_t pid[10];
+    // for(int i=0; i<num; i++){
+    //     if((pid[i]=fork())==0){
+        do{
+            ingresso(request,response);
+            if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
+            sleep(5);
+        }while(posizione!=0);
+
+        do{
+            entra(request,response);
+            if (strstr(response, "ID_carrello") != NULL) sscanf(response, "ID_carrello:%d\n", &id);
+            sleep(5);
+        }while()
+             
+            
+            aggiungi_con_id(request,response,1);
+            aggiungi_con_id(request,response,2);
+            aggiungi_con_id(request,response,1);
+            stampa(request,response);
+            mettiInCoda(request,response);
+            paga(request,response);
+            exit(0);
+    //     }
+    // }
+}
+
+void aggiungi_con_id(char* request, char* response, int id_prodotto){
+    int sockfd=create_socket();
+    char nome_prodotto[50];
+    float prezzo_prodotto;
+    switch (id_prodotto) {
+        case 1: strcpy(nome_prodotto, "Pasta"); prezzo_prodotto = 1.99; break;
+        case 2: strcpy(nome_prodotto, "Latte"); prezzo_prodotto = 0.99; break;
+        case 3: strcpy(nome_prodotto, "Pane"); prezzo_prodotto = 2.49; break;
+        case 4: strcpy(nome_prodotto, "Salsa di pomodoro"); prezzo_prodotto = 1.79; break;
+        case 5: strcpy(nome_prodotto, "Pollo"); prezzo_prodotto = 5.99; break;
+        case 6: strcpy(nome_prodotto, "Uova"); prezzo_prodotto = 2.29; break;
+        case 7: strcpy(nome_prodotto, "Banane"); prezzo_prodotto = 0.69; break;
+        case 8: strcpy(nome_prodotto, "Yogurt"); prezzo_prodotto = 1.49; break;
+        case 9: strcpy(nome_prodotto, "Cereali"); prezzo_prodotto = 3.99; break;
+        case 10: strcpy(nome_prodotto, "Acqua minerale"); prezzo_prodotto = 0.89; break;
+    }
+    sprintf(request, "cliente:%d:aggiungi\n:%d:%s:%f", id, id_prodotto, nome_prodotto, prezzo_prodotto);
+    send_request(sockfd, request);
+    read_response(sockfd, response);
+    printf("%s\n", response);
+    close(sockfd);
 }
 
 void send_request(int socket, char * request) {
@@ -108,43 +171,57 @@ int getScelta() {
 }
 
 void printmenu() {
-    printf("1. Entra nel negozio\n");
-    printf("2. Stampa catalogo\n");
-    printf("3. Aggiungi un prodotto al carrello\n");
-    printf("4. Rimuovi un prodotto dal carrello\n");
-    printf("5. Stampa il carrello\n");
-    printf("6. Mettiti in coda alla cassa\n");
-    printf("7. Paga\n");
-    printf("8. Esci dal negozio\n");
+    printf("1. Mettiti in coda per entrare al negozio\n");
+    printf("2. Entra nel negozio\n");
+    printf("3. Stampa catalogo\n");
+    printf("4. Aggiungi un prodotto al carrello\n");
+    printf("5. Rimuovi un prodotto dal carrello\n");
+    printf("6. Stampa il carrello\n");
+    printf("7. Mettiti in coda alla cassa\n");
+    printf("8. Paga\n");
+    printf("9. Esci dal negozio\n");
 }
 
-void entra(int sockfd, char* request, char* response) {
+void ingresso(char* request, char* response){
+    int sockfd=create_socket();
+    sprintf(request, "cliente:%d:ingresso\n", id);
+    send_request(sockfd, request);
+    read_response(sockfd, response);
+    printf("%s\n", response);
+    close(sockfd);
+}
+
+void entra(char* request, char* response) {
+    int sockfd=create_socket();
     sprintf(request, "cliente:%d:entra\n", id);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
     if (strstr(response, "ID_carrello") != NULL) sscanf(response, "ID_carrello:%d\n", &id);
+    close(sockfd);
 }
 
-void esci(int sockfd, char* request, char* response) {
+void esci(char* request, char* response) {
+    int sockfd=create_socket();
     sprintf(request, "cliente:%d:esce\n", id);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
+    close(sockfd);
 }
 
-void stampaCatalogo(int sockfd, char* request, char* response) {
+void stampaCatalogo(char* request, char* response) {
+    int sockfd=create_socket();
     sprintf(request, "catalogo\n");
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
+    close(sockfd);
 }
 
 
-void aggiungi(int sockfd, char* request, char* response) {
+void aggiungi(char* request, char* response) {
     int id_prodotto;
-    char nome_prodotto[50];
-    float prezzo_prodotto;
     printf("1. Pasta\n");
     printf("2. Latte\n");
     printf("3. Pane\n");
@@ -158,25 +235,11 @@ void aggiungi(int sockfd, char* request, char* response) {
 
     printf("Inserisci l'ID del prodotto: ");
     scanf("%d", &id_prodotto);
-    switch (id_prodotto) {
-        case 1: strcpy(nome_prodotto, "Pasta"); prezzo_prodotto = 1.99; break;
-        case 2: strcpy(nome_prodotto, "Latte"); prezzo_prodotto = 0.99; break;
-        case 3: strcpy(nome_prodotto, "Pane"); prezzo_prodotto = 2.49; break;
-        case 4: strcpy(nome_prodotto, "Salsa di pomodoro"); prezzo_prodotto = 1.79; break;
-        case 5: strcpy(nome_prodotto, "Pollo"); prezzo_prodotto = 5.99; break;
-        case 6: strcpy(nome_prodotto, "Uova"); prezzo_prodotto = 2.29; break;
-        case 7: strcpy(nome_prodotto, "Banane"); prezzo_prodotto = 0.69; break;
-        case 8: strcpy(nome_prodotto, "Yogurt"); prezzo_prodotto = 1.49; break;
-        case 9: strcpy(nome_prodotto, "Cereali"); prezzo_prodotto = 3.99; break;
-        case 10: strcpy(nome_prodotto, "Acqua minerale"); prezzo_prodotto = 0.89; break;
-    }
-    sprintf(request, "cliente:%d:aggiungi\n:%d:%s:%f", id, id_prodotto, nome_prodotto, prezzo_prodotto);
-    send_request(sockfd, request);
-    read_response(sockfd, response);
-    printf("%s\n", response);
+    aggiungi_con_id(request,response,id_prodotto);
 }
 
-void rimuovi(int sockfd, char* request, char* response) {
+void rimuovi(char* request, char* response) {
+    int sockfd=create_socket();
     int id_prodotto;
     printf("Inserisci l'ID del prodotto da rimuovere: ");
     scanf("%d", &id_prodotto);
@@ -184,26 +247,33 @@ void rimuovi(int sockfd, char* request, char* response) {
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
+    close(sockfd);
 }
 
-void stampa(int sockfd, char* request, char* response) {
+void stampa(char* request, char* response) {
+    int sockfd=create_socket();
     sprintf(request, "cliente:%d:stampa", id);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
+    close(sockfd);
 }
 
-void mettiInCoda(int sockfd, char* request, char* response) {
+void mettiInCoda(char* request, char* response) {
+    int sockfd=create_socket();
     sprintf(request, "cliente:%d:coda", id);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
+    close(sockfd);
 }
 
-void paga(int sockfd, char* request, char* response) {
+void paga(char* request, char* response) {
+    int sockfd=create_socket();
     sprintf(request, "cliente:%d:paga", id);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);
+    close(sockfd);
 }
 
