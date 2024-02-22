@@ -24,6 +24,7 @@ pthread_mutex_t mutex_coda_casse;
 pthread_mutex_t mutex_n_clienti;
 pthread_mutex_t mutex_chiocciola;
 pthread_mutex_t mutex_carrelli;
+pthread_mutex_t mutex_cassieri;
 
 #define PORT 5050
 #define MAX_CONNECTIONS 10
@@ -154,8 +155,7 @@ void* riordinaCarrelli() {
         sleep(TIMER_PULIZIA_CARRELLI); 
         printf("[NEGRETTO] Riordino carrelli\n");
         for(int i = 0; i < VARIABILE_C; i++) {
-            if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + TIMER_PULIZIA_CARRELLI < time(NULL)) {
-                pthread_mutex_lock(&carrelli[i].mutex);
+            if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + TIMER_PULIZIA_CARRELLI < time(NULL) && carrelli[i].status != IN_CASSA) {
                 printf("[NEGRETTO] Carrello %d riordinato\n", i);
                 svuota_carrello(&carrelli[i]);
                 if(carrelli[i].status == IN_CODA) rimuovi_cliente_coda_id(i, &coda_casse);

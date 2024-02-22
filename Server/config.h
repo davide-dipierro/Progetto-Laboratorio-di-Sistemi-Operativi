@@ -7,11 +7,11 @@
 #endif
 
 #ifndef N_CASSE
-#define N_CASSE 1
+#define N_CASSE 2
 #endif
 
 #ifndef TIMER_PULIZIA_CARRELLI
-#define TIMER_PULIZIA_CARRELLI 80
+#define TIMER_PULIZIA_CARRELLI 40
 #endif
 
 #ifndef TIMER_BUTTAFUORI

@@ -15,15 +15,14 @@ void* aspettaFila(void* ptr) {
     coda_casse_t* coda_casse = cassiere->coda_casse;
     while(1) {
         pthread_t thread_elabora_carrello;
-        pthread_mutex_lock(&mutex_coda_casse);
+        pthread_mutex_lock(&mutex_cassieri);
         if(coda_casse->head != NULL) { 
             printf("[CASSIERE] C'è qualcuno in fila\n");
-            pthread_mutex_unlock(&mutex_coda_casse);
             if(pthread_create(&thread_elabora_carrello, NULL, elaboraCarrello, (void*)cassiere) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
             pthread_join(thread_elabora_carrello, NULL);
             printf("[CASSIERE] Carrello elaborato\n");
         } else {
-            pthread_mutex_unlock(&mutex_coda_casse);
+            pthread_mutex_unlock(&mutex_cassieri);
         }
         sleep(cassiere->tempoCassiere);
     }
@@ -36,6 +35,7 @@ void* elaboraCarrello(void* ptr) {
     coda_casse_t* coda_casse = cassiere->coda_casse;
     int id = coda_casse->head->id_cliente;
     rimuovi_cliente_coda_id(id, coda_casse);
+    pthread_mutex_unlock(&mutex_cassieri);
     carrelli[id].status = IN_CASSA;
     pthread_mutex_lock(&carrelli[id].mutex);
     for(int i = 0; i < carrelli[id].n_prodotti; i++) sleep(cassiere->tempoElaborazioneProdotto);
