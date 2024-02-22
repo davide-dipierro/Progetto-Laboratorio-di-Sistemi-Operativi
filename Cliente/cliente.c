@@ -3,7 +3,6 @@
  * e stampa la risposta
  */
 
- //modifica
 
 #include <stdio.h>
 #include <stdlib.h>
