@@ -5,6 +5,7 @@ extern pthread_mutex_t mutex_chiocciola;
 extern pthread_mutex_t mutex_carrelli;
 int n_clienti = 0;
 int numero_chiocciola = 0;
+bool allow=true;
 
 int get_n_clienti(){
     int n;
@@ -75,18 +76,16 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t
 bool puoEntrare(coda_ingresso_t* coda_ingresso){
     int Num = get_n_clienti();
     int fila = numero_clienti_coda_ingresso(coda_ingresso);
-    if (
-        ((Num<VARIABILE_C-VARIABILE_E) || 
-        (
-            ((Num>=VARIABILE_C-VARIABILE_E) && (fila>=VARIABILE_E)) ||
-            ((fila>=VARIABILE_C-Num) && (fila<VARIABILE_E))
-        )) && (Num<VARIABILE_C)
-    ) {
+
+    if (Num==VARIABILE_C) allow=false;
+    if (Num<=VARIABILE_C-VARIABILE_E) allow=true;
+    if (allow){
         printf("[BUTTAFUORI] Può entrare. In negozio: %d, In coda: %d\n", Num, fila);
         return true;
+    } else {
+        printf("[BUTTAFUORI] Non può entrare. In negozio: %d, In coda: %d\n", Num, fila);
+        return false;
     }
-    printf("[BUTTAFUORI] Non può entrare. In negozio: %d, In coda: %d\n", Num, fila);
-    return false;
 }
 
 void clienteEntraInCodaIngresso(int id, char* response, coda_ingresso_t* coda_ingresso){

@@ -15,7 +15,7 @@
 #endif
 
 #ifndef TIMER_BUTTAFUORI
-#define TIMER_BUTTAFUORI 15
+#define TIMER_BUTTAFUORI 40
 #endif
 
 #ifndef TIMER_AGGIORNAMENTO_UI
