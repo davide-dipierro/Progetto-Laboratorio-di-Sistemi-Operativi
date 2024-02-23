@@ -41,15 +41,14 @@ int id_cliente =-1;
 
 int main(int argc, char** argv) {
     while (1){
-        system("clear");        
-
         char request[MAX_REQUEST_SIZE];
         char response[MAX_RESPONSE_SIZE];
 
-        if(argc>=1) {
+        if(strcmp(argv[1], "autopilota") == 0){
             autopilota(request, response);
             exit(0);
         } else {
+            system("clear");        
             int scelta = getScelta();
             switch (scelta) {
                 case 1: ingresso(request,response); break;
@@ -101,6 +100,10 @@ int create_socket(){
 void autopilota(char* request, char* response){
     int posizione=-1;
     int app;
+    //sleep random da 1 a 5 secondi con 0.1 di step
+    srand(time(NULL));
+    int random = (rand() % 50) + 10;
+    sleep(random/10);
     do{
         ingresso(request,response);
         if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
@@ -113,9 +116,12 @@ void autopilota(char* request, char* response){
     }while(id_carrello==-1);
         
     aggiungi_con_id(request,response,1);
+    sleep(1);
     aggiungi_con_id(request,response,2);
+    sleep(1);
     aggiungi_con_id(request,response,1);
-    //stampa(request,response);
+    sleep(1);
+    stampa(request,response);
 
     posizione=-1;
 

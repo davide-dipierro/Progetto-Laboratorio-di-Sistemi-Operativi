@@ -1,9 +1,9 @@
 #ifndef VARIABILE_C
-#define VARIABILE_C 2
+#define VARIABILE_C 8
 #endif
 
 #ifndef VARIABILE_E
-#define VARIABILE_E 1
+#define VARIABILE_E 3
 #endif
 
 #ifndef N_CASSE

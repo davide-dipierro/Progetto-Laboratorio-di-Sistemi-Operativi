@@ -45,28 +45,31 @@ void clienteParser(char* request, char* response, carrello_t* carrelli, coda_cas
     else if(strcmp(comando, "paga") == 0) clientePaga(id, response, carrelli);
     else strcpy(response, "Comando non riconosciuto\n\0");
 
-    if(strcmp(comando, "esce") != 0 && strcmp(comando, "ingresso") != 0) {
+    if(strcmp(comando, "esce") != 0 && strcmp(comando, "ingresso") != 0 && id >= 0) {
         carrelli[id].ultima_operazione = time(NULL);
     }
+
+    //printf("[TEST-PARSER] Risposta: %s\n", response);
 }
 
 void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t* coda_ingresso){
     if(!puoEntrare(coda_ingresso)) {
         sprintf(response, "Non puoi entrare\n");
-        printf("[TEST] Cliente %d non può entrare\n", *id);
-        return;
+        //printf("[TEST-ENTRA] Cliente %d non può entrare\n", *id);
+    }else{
+        printf("[BUTTAFUORI] Cliente %d può entrare\n", *id);
+        rimuovi_cliente_coda_ingresso(coda_ingresso);
+        ////printf("[TEST] Cliente %d rimosso dalla coda di ingresso\n", *id);
+        incrementa_n_clienti();
+        int i = 0;
+        while(i < VARIABILE_C && carrelli[i].status != LIBERO) i++;
+        pthread_mutex_lock(&carrelli[i].mutex);
+        carrelli[i].status = IN_NEGOZIO;
+        carrelli[i].ultima_operazione = time(NULL);
+        sprintf(response, "ID_carrello:%d\n", i);
+        *id = i;
     }
-    //printf("[TEST] Cliente %d può entrare\n", *id);
-    rimuovi_cliente_coda_ingresso(coda_ingresso);
-    //printf("[TEST] Cliente %d rimosso dalla coda di ingresso\n", *id);
-    incrementa_n_clienti();
-    int i = 0;
-    while(i < VARIABILE_C && carrelli[i].status != LIBERO) i++;
-    pthread_mutex_lock(&carrelli[i].mutex);
-    carrelli[i].status = IN_NEGOZIO;
-    carrelli[i].ultima_operazione = time(NULL);
-    sprintf(response, "ID_carrello:%d\n", i);
-    *id = i;
+    //printf("[TEST-ENTRA] esce\n");
 }
 
 bool puoEntrare(coda_ingresso_t* coda_ingresso){
