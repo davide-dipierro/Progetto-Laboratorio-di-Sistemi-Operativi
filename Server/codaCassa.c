@@ -1,8 +1,11 @@
 #include "codaCassa.h"
 
 void aggiungi_cliente_coda(int id_cliente, coda_casse_t* coda_casse){
+    //printf("[TEST-CODA-CASSE] Aggiungo il cliente %d alla coda\n", id_cliente);
     pthread_mutex_lock(&mutex_coda_casse); // Lock mutex before accessing the queue
+    //printf("[TEST-CODA-CASSE] Mutex acquisito\n");
     nodo_t* nuovo_nodo = (nodo_t*) malloc(sizeof(nodo_t));
+    //printf("[TEST-CODA-CASSE] Nodo allocato\n");
     nuovo_nodo->id_cliente = id_cliente;
     nuovo_nodo->next = NULL;
     if(coda_casse->head == NULL){
@@ -12,7 +15,9 @@ void aggiungi_cliente_coda(int id_cliente, coda_casse_t* coda_casse){
         coda_casse->tail->next = nuovo_nodo;
         coda_casse->tail = nuovo_nodo;
     }
+    //printf("[TEST-CODA-CASSE] Cliente %d aggiunto alla coda\n", id_cliente);
     pthread_mutex_unlock(&mutex_coda_casse); // Unlock mutex after accessing the queue
+    //printf("[TEST-CODA-CASSE] Mutex rilasciato\n");
 }
 
 int rimuovi_cliente_coda(coda_casse_t* coda_casse){

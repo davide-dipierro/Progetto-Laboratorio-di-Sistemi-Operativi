@@ -77,8 +77,10 @@ bool puoEntrare(coda_ingresso_t* coda_ingresso){
     int fila = numero_clienti_coda_ingresso(coda_ingresso);
     if (
         ((Num<VARIABILE_C-VARIABILE_E) || 
-        (((Num>=VARIABILE_C-VARIABILE_E) && (fila>=VARIABILE_E)) ||
-        ((fila>=VARIABILE_C-Num) && (fila<VARIABILE_E)))) && (Num<=VARIABILE_C)
+        (
+            ((Num>=VARIABILE_C-VARIABILE_E) && (fila>=VARIABILE_E)) ||
+            ((fila>=VARIABILE_C-Num) && (fila<VARIABILE_E))
+        )) && (Num<VARIABILE_C)
     ) {
         printf("[BUTTAFUORI] Può entrare. In negozio: %d, In coda: %d\n", Num, fila);
         return true;
@@ -160,7 +162,7 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
     if(carrelli[id].status == IN_NEGOZIO) {
         aggiungi_cliente_coda(id, casse);
         carrelli[id].status = IN_CODA;
-        printf("[TEST-CODACASSE] Cliente %d si è messo in coda. Clienti in coda: %d\n", id, numero_clienti_coda(casse));
+        //printf("[TEST-CODACASSE] Cliente %d si è messo in coda. Clienti in coda: %d\n", id, numero_clienti_coda(casse));
     }
     int position = posizione_cliente_coda(id, casse);
     if(position == 0 && carrelli[id].status == IN_CODA) {
