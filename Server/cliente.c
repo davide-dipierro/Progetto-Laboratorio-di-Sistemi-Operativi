@@ -75,31 +75,17 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t
 bool puoEntrare(coda_ingresso_t* coda_ingresso){
     int Num = get_n_clienti();
     int fila = numero_clienti_coda_ingresso(coda_ingresso);
-    // if (
-    //     ((Num<VARIABILE_C-VARIABILE_E) || 
-    //     (
-    //         ((Num>=VARIABILE_C-VARIABILE_E) && (fila>=VARIABILE_E)) ||
-    //         ((fila>=VARIABILE_C-Num) && (fila<VARIABILE_E))
-    //     )) && (Num<VARIABILE_C)
-    // ) {
-    //     printf("[BUTTAFUORI] Può entrare. In negozio: %d, In coda: %d\n", Num, fila);
-    //     return true;
-    // }
-    // printf("[BUTTAFUORI] Non può entrare. In negozio: %d, In coda: %d\n", Num, fila);
-    // return false;
-    if(
-        (((Num<VARIABILE_C-VARIABILE_E)) || 
+    if (
+        ((Num<VARIABILE_C-VARIABILE_E) || 
         (
-            ((Num>=VARIABILE_C-VARIABILE_E) && (fila>VARIABILE_E))
+            ((Num>=VARIABILE_C-VARIABILE_E) && (fila>=VARIABILE_E)) ||
+            ((fila>=VARIABILE_C-Num) && (fila<VARIABILE_E))
         )) && (Num<VARIABILE_C)
-    ){
+    ) {
         printf("[BUTTAFUORI] Può entrare. In negozio: %d, In coda: %d\n", Num, fila);
         return true;
-    }else if ((Num>=VARIABILE_C-VARIABILE_E) && (fila<VARIABILE_E)){
-        printf("[BUTTAFUORI] Non può entrare. In negozio: %d, In coda: %d\n", Num, fila);
-        return false;
     }
-    printf("[TEST] NON VA BENE NESSUN CASO\n");
+    printf("[BUTTAFUORI] Non può entrare. In negozio: %d, In coda: %d\n", Num, fila);
     return false;
 }
 
