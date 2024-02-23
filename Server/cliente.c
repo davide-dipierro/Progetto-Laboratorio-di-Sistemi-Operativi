@@ -53,6 +53,7 @@ void clienteParser(char* request, char* response, carrello_t* carrelli, coda_cas
 void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t* coda_ingresso){
     if(!puoEntrare(coda_ingresso)) {
         sprintf(response, "Non puoi entrare\n");
+        printf("[TEST] Cliente %d non può entrare\n", *id);
         return;
     }
     //printf("[TEST] Cliente %d può entrare\n", *id);

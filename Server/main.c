@@ -117,7 +117,6 @@ void* process(void * ptr) {
     }
     else printf("Richiesta non valida\n"); 
     
-
     // Invio la risposta al client
     send_response(socket, response);
 
@@ -126,7 +125,9 @@ void* process(void * ptr) {
 }
 
 void send_response(int socket, char* response) {
+    printf("[TEST] Invio risposta: %s\n", response);
     if(write(socket, response, strlen(response)) == -1) perror("Write"), exit(1);
+    printf("[TEST] Risposta inviata\n");
 }
 
 void read_request(int socket, char* request) {
