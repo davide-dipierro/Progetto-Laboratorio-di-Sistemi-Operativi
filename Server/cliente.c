@@ -160,7 +160,7 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
     if(carrelli[id].status == IN_NEGOZIO) {
         aggiungi_cliente_coda(id, casse);
         carrelli[id].status = IN_CODA;
-        //printf("Cliente %d si è messo in coda alle casse\n", id);
+        printf("[TEST-CODACASSE] Cliente %d si è messo in coda. Clienti in coda: %d\n", id, numero_clienti_coda(casse));
     }
     int position = posizione_cliente_coda(id, casse);
     if(position == 0 && carrelli[id].status == IN_CODA) {
