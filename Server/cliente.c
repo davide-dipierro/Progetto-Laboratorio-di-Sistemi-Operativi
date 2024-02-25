@@ -139,7 +139,7 @@ void clienteAggiunge(int id, char* request, char* response, carrello_t* carrelli
 
 void clienteRimuove(int id, char* request, char* response, carrello_t* carrelli){
     int id_prodotto;
-    sscanf(request, "cliente:%d:rimuovi\n%d", &id, &id_prodotto);
+    sscanf(request, "cliente:%d:rimuovi\n:%d", &id, &id_prodotto);
     rimuovi_prodotto(&carrelli[id], id_prodotto);
     //printf("Prodotto %d rimosso dal carrello %d\n", id_prodotto, id);
     strcpy(response, "Prodotto rimosso dal carrello\n\0");
@@ -171,7 +171,7 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
 }
 
 void clientePaga(int id, char* response, carrello_t* carrelli) {
-    if(carrelli[id].status == PAGAMENTO || carrelli[id].status == PAGATO) {
+    if(carrelli[id].status == PAGAMENTO || carrelli[id].status == PAGATO || (carrelli[id].status == IN_NEGOZIO && carrelli[id].n_prodotti == 0)) {
         sprintf(response, "ok\n");
         carrelli[id].status = PAGATO;
     } else {

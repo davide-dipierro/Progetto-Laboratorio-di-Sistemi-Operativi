@@ -12,7 +12,8 @@
         "carrello.h": "c",
         "unistd.h": "c",
         "codaingresso.h": "c",
-        "codacassa.h": "c"
+        "codacassa.h": "c",
+        "stdlib.h": "c"
     },
     "sonarlint.connectedMode.project": {
         "connectionId": "http-home-davidedipierro-it-9000-",

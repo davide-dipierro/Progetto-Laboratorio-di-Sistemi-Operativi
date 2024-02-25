@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
         char request[MAX_REQUEST_SIZE];
         char response[MAX_RESPONSE_SIZE];
 
-        if(strcmp(argv[1], "autopilota") == 0){
+        if(argc == 2 && strcmp(argv[1], "autopilota") == 0){
             autopilota(request, response);
             exit(0);
         } else {
@@ -262,7 +262,7 @@ void rimuovi(char* request, char* response) {
     int id_prodotto;
     printf("Inserisci l'ID del prodotto da rimuovere: ");
     scanf("%d", &id_prodotto);
-    sprintf(request, "cliente:%d:rimuovi\n%d", id_carrello, id_prodotto);
+    sprintf(request, "cliente:%d:rimuovi\n:%d", id_carrello, id_prodotto);
     send_request(sockfd, request);
     read_response(sockfd, response);
     printf("%s\n", response);

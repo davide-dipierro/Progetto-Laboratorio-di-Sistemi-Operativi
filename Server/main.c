@@ -62,9 +62,9 @@ int main() {
     pthread_t thread_buttafuori;
     if(pthread_create(&thread_buttafuori, NULL, buttafuoriAllIngresso, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     printf("[SERVER] Thread buttafuori creato\n");
-    //pthread_t thread_ui;
-    //if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
-    //printf("[SERVER] Thread UI creato\n");
+    pthread_t thread_ui;
+    if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+    printf("[SERVER] Thread UI creato\n");
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;
@@ -188,31 +188,26 @@ void* buttafuoriAllIngresso(){
 void* ui(){
     while(1){
         printf("\033[H\033[J");
-        printf("\nIN NEGOZIO:\n");
-        int persone = 0;
+        int p_in_negozio = 0;
+        int p_in_cassa = 0;
         for(int i = 0; i < VARIABILE_C; i++) {
             if (carrelli[i].status == IN_NEGOZIO) {
-                persone++;
+                p_in_negozio++;
             }
-        }
-        stampa_stickman(persone);
-        persone = 0;
-        printf("IN CODA:\n");
-        fflush(stdout);
-        for(int i = 0; i < VARIABILE_C; i++) {
-            if (carrelli[i].status == IN_CODA) {
-                persone++;
-            }
-        }
-        stampa_stickman(persone);
-        persone = 0;
-        printf("IN CASSA:\n");
-        for(int i = 0; i < VARIABILE_C; i++) {
             if (carrelli[i].status == IN_CASSA || carrelli[i].status == PAGAMENTO) {
-                persone++;
+                p_in_cassa++;
             }
         }
-        stampa_stickman(persone);
+        printf("\nFUORI:\n");
+        int p_in_coda = numero_clienti_coda_ingresso(&coda_ingresso);
+        stampa_stickman(p_in_coda);
+        printf("IN NEGOZIO:\n");
+        stampa_stickman(p_in_negozio);
+        p_in_coda = numero_clienti_coda(&coda_casse);
+        printf("IN CODA:\n");
+        stampa_stickman(p_in_coda);
+        printf("IN CASSA:\n");
+        stampa_stickman(p_in_cassa);
         printf("\n");
         fflush(stdout);
         sleep(1);
