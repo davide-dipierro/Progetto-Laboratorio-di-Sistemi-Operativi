@@ -140,9 +140,8 @@ void clienteAggiunge(int id, char* request, char* response, carrello_t* carrelli
 void clienteRimuove(int id, char* request, char* response, carrello_t* carrelli){
     int id_prodotto;
     sscanf(request, "cliente:%d:rimuovi\n:%d", &id, &id_prodotto);
-    rimuovi_prodotto(&carrelli[id], id_prodotto);
-    //printf("Prodotto %d rimosso dal carrello %d\n", id_prodotto, id);
-    strcpy(response, "Prodotto rimosso dal carrello\n\0");
+    if(rimuovi_prodotto(&carrelli[id], id_prodotto)) strcpy(response, "ok\n\0");
+    else strcpy(response, "Prodotto non trovato\n\0");
 }
 
 void clienteStampa(int id, char* response, carrello_t* carrelli){

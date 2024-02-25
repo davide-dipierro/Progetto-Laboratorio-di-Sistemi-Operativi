@@ -1,9 +1,9 @@
 #ifndef VARIABILE_C
-#define VARIABILE_C 5
+#define VARIABILE_C 10
 #endif
 
 #ifndef VARIABILE_E
-#define VARIABILE_E 2
+#define VARIABILE_E 3
 #endif
 
 #ifndef N_CASSE
@@ -11,11 +11,11 @@
 #endif
 
 #ifndef TIMER_PULIZIA_CARRELLI
-#define TIMER_PULIZIA_CARRELLI 40
+#define TIMER_PULIZIA_CARRELLI 20
 #endif
 
 #ifndef TIMER_BUTTAFUORI
-#define TIMER_BUTTAFUORI 40
+#define TIMER_BUTTAFUORI 10
 #endif
 
 #ifndef TIMER_AGGIORNAMENTO_UI

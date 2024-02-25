@@ -47,7 +47,7 @@ void stampa_stickman(int num_stickman);
 
 pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
 
-int main() {
+int main(int argc, char** argv) {
     printf("[SERVER] Inizializzo carrelli\n");
     inizializza_carrelli(carrelli);
     printf("[SERVER] Entrano i cassieri\n");
@@ -61,10 +61,13 @@ int main() {
     printf("[SERVER] Thread pulizia carrelli creato\n");
     pthread_t thread_buttafuori;
     if(pthread_create(&thread_buttafuori, NULL, buttafuoriAllIngresso, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
-    printf("[SERVER] Thread buttafuori creato\n");
     pthread_t thread_ui;
-    if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
-    printf("[SERVER] Thread UI creato\n");
+    printf("[SERVER] Thread buttafuori creato\n");
+    if(argc == 2 && strcmp(argv[1], "UI") == 0){
+        if(pthread_create(&thread_ui, NULL, ui, NULL) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+        printf("[SERVER] Thread UI creato\n");
+    }
+
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;
@@ -154,10 +157,10 @@ void inviaCatalogo(char* response) {
 void* riordinaCarrelli() {
     while(1) {
         sleep(TIMER_PULIZIA_CARRELLI); 
-        printf("[NEGRETTO] Riordino carrelli\n");
+        printf("[ADDETTO] Riordino carrelli\n");
         for(int i = 0; i < VARIABILE_C; i++) {
             if(carrelli[i].status != LIBERO && carrelli[i].ultima_operazione + TIMER_PULIZIA_CARRELLI < time(NULL) && carrelli[i].status != IN_CASSA) {
-                printf("[NEGRETTO] Carrello %d riordinato\n", i);
+                printf("[ADDETTO] Carrello %d riordinato\n", i);
                 svuota_carrello(&carrelli[i]);
                 if(carrelli[i].status == IN_CODA) rimuovi_cliente_coda_id(i, &coda_casse);
                 carrelli[i].status = LIBERO;

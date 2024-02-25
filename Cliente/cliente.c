@@ -40,6 +40,7 @@ int id_carrello =-1;
 int id_cliente =-1;
 
 int main(int argc, char** argv) {
+    srand(time(NULL));
     while (1){
         char request[MAX_REQUEST_SIZE];
         char response[MAX_RESPONSE_SIZE];
@@ -100,8 +101,6 @@ int create_socket(){
 void autopilota(char* request, char* response){
     int posizione=-1;
     int app;
-    //sleep random da 1 a 5 secondi con 0.1 di step
-    srand(time(NULL));
     int random = (rand() % 50) + 10;
     sleep(random/10);
     do{

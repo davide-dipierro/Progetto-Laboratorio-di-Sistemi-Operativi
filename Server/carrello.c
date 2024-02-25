@@ -19,7 +19,7 @@ void aggiungi_prodotto(carrello_t* carrello, prodotto_t prodotto) {
     carrello->n_prodotti++;
 }
 
-void rimuovi_prodotto(carrello_t* carrello, int id_prodotto) {
+bool rimuovi_prodotto(carrello_t* carrello, int id_prodotto) {
     nodo_t_carr* nodo_carr_corrente = carrello->head;
     nodo_t_carr* nodo_carr_precedente = NULL;
 
@@ -43,12 +43,13 @@ void rimuovi_prodotto(carrello_t* carrello, int id_prodotto) {
             free(nodo_carr_corrente);
 
             carrello->n_prodotti--;
-            return;
+            return true;
         }
 
         nodo_carr_precedente = nodo_carr_corrente;
         nodo_carr_corrente = nodo_carr_corrente->next;
     }
+    return false;
 }
 
 void stampa_carrello(char* stringa, carrello_t* carrello) {

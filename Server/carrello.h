@@ -44,7 +44,7 @@ typedef struct {
 void stampa_carrello(char*, carrello_t*);
 void aggiungi_prodotto(carrello_t*, prodotto_t);
 float calcola_totale(carrello_t*);
-void rimuovi_prodotto(carrello_t*, int);
+bool rimuovi_prodotto(carrello_t*, int);
 void inizializza_carrelli(carrello_t*);
 void svuota_carrello(carrello_t*);
 
