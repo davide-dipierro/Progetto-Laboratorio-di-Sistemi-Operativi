@@ -778,3 +778,29 @@ ok
 
 Sei uscito dal negozio
 
+ID_cliente:0:0
+
+ID_carrello:1
+
+ok
+
+ok
+
+ok
+
+{1:Pasta:1.990000}
+{2:Latte:0.990000}
+{1:Pasta:1.990000}
+
+0
+
+Carrello in elaborazione
+
+Carrello in elaborazione
+
+ID_cliente:9:9
+
+ID_cliente:9:8
+
+ID_cliente:9:7
+
