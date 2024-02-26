@@ -1,7 +1,9 @@
 package com.ingsw.progettolso_cliente;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,7 +41,10 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
             socket.close();
         } catch (Exception e) {
             Log.e("Client error", e.getMessage());
+            // Invio un messaggio all'utente con un Toast
+            Looper.prepare();
             Toast.makeText(mainActivity, "Errore di connessione", Toast.LENGTH_LONG).show();
+            Looper.loop();
         }
         return null;
     }
@@ -55,6 +60,35 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         else if(request.contains("paga")) processPaga();
         else if(request.contains("ingresso")) processIngresso();
         else if(request.contains("entra")) processEntra();
+        else if(request.contains("stampa")) processStampa();
+        else if(request.contains("rimuovi")) processRimuovi();
+    }
+
+    private void processRimuovi() {
+        ;
+    }
+
+
+    private void processStampa() {
+        Log.d("ProcessStampa", response);
+        ExitActivity exitActivity = (ExitActivity) this.mainActivity;
+        // Rimuovo il 'null' all'inizio della stringa
+        response = response.substring(4);
+        try{
+            // {id:nome:prezzo}{id:nome:prezzo}...
+            String[] prodotti = response.split("\\}\\{");
+            for(String prodotto : prodotti){
+                prodotto = prodotto.replace("{", "").replace("}", "");
+                String[] split = prodotto.split(":");
+                exitActivity.updateTotale(Double.parseDouble(split[2]));
+                exitActivity.prodotti.add(new Prodotto(Integer.parseInt(split[0]), split[1], Double.parseDouble(split[2])));
+            }
+        } catch (Exception e) {
+            Log.e("ProcessStampa", e.getMessage());
+        }
+
+        // Aggiorno la lista
+        exitActivity.adapter.notifyDataSetChanged();
     }
 
     private void processEntra() {
@@ -62,7 +96,6 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         StartActivity startActivity = (StartActivity) this.mainActivity;
         // Rimuovo il 'null' all'inizio della stringa
         response = response.substring(4);
-
     }
 
     private void processCoda() {
@@ -93,10 +126,10 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         if(response.equals("ok") && codaCasseActivity.wantToPay){
             Log.d("Request", request);
             codaCasseActivity.wantToPay = false;
-            codaCasseActivity.textViewCoda.setText("Ordine completato!");
-            codaCasseActivity.gotoStartActivity();
+            codaCasseActivity.textViewCoda.setText("Pagamento effettutato!");
+            codaCasseActivity.gotoExitActivity();
         }else{
-           codaCasseActivity.textViewCoda.setText("Il carrello è in elaborazione...");
+           codaCasseActivity.textViewCoda.setText("Attendi che il cassiere prenda il tuo carrello ed elabori il tuo ordine...");
         }
     }
 

@@ -39,4 +39,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/cartAnimation"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_scale="1.2"
+        app:lottie_fileName="cart.json" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

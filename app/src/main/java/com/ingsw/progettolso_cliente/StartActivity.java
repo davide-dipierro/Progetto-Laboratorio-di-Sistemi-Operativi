@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 public class StartActivity extends AppCompatActivity {
 
     int posizione = -1;
@@ -17,6 +19,7 @@ public class StartActivity extends AppCompatActivity {
     Button buttonEntra;
     TextView textViewCoda;
     ProgressBar progressBar;
+    LottieAnimationView cartAnimation;
     boolean wantToEnter = false;
 
     @Override
@@ -27,7 +30,7 @@ public class StartActivity extends AppCompatActivity {
         buttonEntra = findViewById(R.id.enter_button);
         progressBar = findViewById(R.id.progressBar);
         textViewCoda = findViewById(R.id.textViewCodaIngresso);
-
+        cartAnimation = findViewById(R.id.cartAnimation);
 
         new Thread(new Runnable() {
             @Override
@@ -36,7 +39,7 @@ public class StartActivity extends AppCompatActivity {
                     try {
                         if(wantToEnter) updateCoda();
                         Thread.sleep(2000);
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -46,10 +49,25 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reset();
+    }
+
+    public void reset() {
+        wantToEnter = false;
+        buttonEntra.setEnabled(true);
+        progressBar.setVisibility(View.INVISIBLE);
+        textViewCoda.setVisibility(View.INVISIBLE);
+        cartAnimation.setVisibility(View.INVISIBLE);
+    }
+
     public void enter_market(View view) {
         buttonEntra.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
         textViewCoda.setVisibility(View.VISIBLE);
+        cartAnimation.setVisibility(View.VISIBLE);
         wantToEnter = true;
     }
 
@@ -61,7 +79,11 @@ public class StartActivity extends AppCompatActivity {
                 ClientTask clientTask = new ClientTask(StartActivity.this, "cliente:" + numero_chiocciola + ":ingresso");
                 clientTask.execute();
                 while(clientTask.response == null);
-                textViewCoda.setText("Posizione in coda: " + posizione);
+                if (posizione == -1) {
+                    textViewCoda.setText("Ti stai mettendo in coda...");
+                } else {
+                    textViewCoda.setText("Posizione in coda: " + posizione);
+                }
                 if (posizione == 0) {
                     textViewCoda.setText("È il tuo turno!");
                     while(!checkEntra()) {
@@ -85,9 +107,11 @@ public class StartActivity extends AppCompatActivity {
         while(clientTask.response == null);
         if (clientTask.response.contains("Non puoi entrare")) {
             Log.d("CheckEntra", "Non puoi entrare");
+            textViewCoda.setText("Attendi che ci sia spazio nel supermercato...");
             return false;
         } else {
             SharedPreferencesID.saveId(this, clientTask.response.split(":")[1]);
+            textViewCoda.setText("Puoi entrare!");
             Log.d("CheckEntra", "Puoi entrare");
             return true;
         }

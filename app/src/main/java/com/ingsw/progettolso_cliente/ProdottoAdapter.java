@@ -6,7 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -37,12 +39,13 @@ public class ProdottoAdapter extends ArrayAdapter<Prodotto> {
         TextView textViewId = convertView.findViewById(R.id.textViewId);
         TextView textViewNome = convertView.findViewById(R.id.textViewNome);
         TextView textViewPrezzo = convertView.findViewById(R.id.textViewPrezzo);
-        Button buttonAggiungi = convertView.findViewById(R.id.buttonAggiungi);
+        ImageButton buttonAggiungi = convertView.findViewById(R.id.buttonAggiungi);
+        ImageButton buttonRimuovi = convertView.findViewById(R.id.buttonRimuovi);
 
         // Imposta i valori degli attributi del prodotto nei TextView
-        textViewId.setText("ID: " + prodotto.getId());
-        textViewNome.setText("Nome: " + prodotto.getNome());
-        textViewPrezzo.setText("Prezzo: " + prodotto.getPrezzo());
+        textViewId.setText("ID: \n" + prodotto.getId());
+        textViewNome.setText("Nome: \n" + prodotto.getNome());
+        textViewPrezzo.setText("Prezzo: \n" + prodotto.getPrezzo());
 
         // Gestisci il clic sul pulsante (puoi aggiungere qui la logica desiderata)
         buttonAggiungi.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +53,27 @@ public class ProdottoAdapter extends ArrayAdapter<Prodotto> {
             public void onClick(View v) {
                 ClientTask clientTask = new ClientTask(mainActivity, "cliente:"+ id +":aggiungi\n:" + prodotto.getId() + ":" + prodotto.getNome() + ":" + prodotto.getPrezzo());
                 clientTask.execute();
+            }
+        });
+
+        buttonRimuovi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClientTask clientTask = new ClientTask(mainActivity, "cliente:"+ id +":rimuovi\n:" + prodotto.getId());
+                clientTask.execute();
+                while(clientTask.response == null) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(clientTask.response.contains("ok")) {
+                    mainActivity.updateTotale(-prodotto.getPrezzo());
+                }
+                else {
+                    mainActivity.updateTotale(0);
+                }
             }
         });
 

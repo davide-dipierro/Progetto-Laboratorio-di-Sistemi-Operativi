@@ -67,8 +67,8 @@ public class CodaCasseActivity extends AppCompatActivity {
     }
 
 
-    public void gotoStartActivity() {
-        Intent intent = new Intent(this, StartActivity.class);
+    public void gotoExitActivity() {
+        Intent intent = new Intent(this, ExitActivity.class);
         startActivity(intent);
     }
 }
