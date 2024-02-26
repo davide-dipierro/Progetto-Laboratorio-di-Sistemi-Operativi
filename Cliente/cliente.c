@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <semaphore.h>
+#include <arpa/inet.h>
 
 #define MAX_REQUEST_SIZE 1024
 #define MAX_RESPONSE_SIZE 1024
@@ -75,6 +76,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+
 int create_socket(){
     int sockfd;
     struct sockaddr_in server_address;
@@ -87,7 +89,6 @@ int create_socket(){
     // Set server address
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(5050);
-    //server_address.sin_addr.s_addr = inet_addr("13.39.85.223");
     server_address.sin_addr.s_addr = inet_addr("serverlso");
 
     // Connect to server
@@ -98,6 +99,8 @@ int create_socket(){
     
     return sockfd;
 }
+
+
 
 void autopilota(char* request, char* response){
     int posizione=-1;

@@ -1,24 +1,16 @@
 version: '3'
 
 services:
-  server:
+  serverlso:
     build:
       context: ./Server
-      dockerfile: dockerfile
+      dockerfile: dockerfile  # Assicurati che il nome del tuo file Dockerfile sia corretto
     container_name: serverlso
     ports:
       - "5050:5050"
-    networks:
-      - my_network
 
-  client:
+  clientlso:
     build:
       context: ./Cliente
-      dockerfile: dockerfile
+      dockerfile: dockerfile  # Assicurati che il nome del tuo file Dockerfile sia corretto
     container_name: clientlso
-    networks:
-      - my_network
-
-networks:
-  my_network:
-    driver: bridge
