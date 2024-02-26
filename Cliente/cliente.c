@@ -87,7 +87,7 @@ int create_socket(){
     // Set server address
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(5050);
-    server_address.sin_addr.s_addr = inet_addr("79.46.233.231");
+    server_address.sin_addr.s_addr = inet_addr("192.168.1.254");
 
     // Connect to server
     if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) {
