@@ -1,6 +1,0 @@
-Di seguito sono riportati i comandi da eseguire per il funzionamento del progetto:
-
-
-//comandi lato docker
-docker build -t progettolso .
-docker run -p 5050:5050 -e -it progettolso

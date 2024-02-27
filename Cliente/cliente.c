@@ -14,18 +14,9 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <semaphore.h>
-#include <arpa/inet.h>
 
 #define MAX_REQUEST_SIZE 1024
 #define MAX_RESPONSE_SIZE 1024
-
-#define SERVER_IP "127.0.0.1"
-#define SERVER_PORT 5050
-
-typedef struct {
-    char request[MAX_REQUEST_SIZE];
-    char response[MAX_RESPONSE_SIZE];
-} RequestResponse;
 
 void send_request(int socket, char * request);
 void read_response(int socket, char * response);
@@ -43,12 +34,10 @@ void mettiInCoda(char* request, char* response);
 void paga(char* request, char* response);
 void stampaCatalogo(char* request, char* response);
 void aggiungi_con_id(char* request, char* response, int id_prodotto);
-void autopilota();
+void autopilota(char* request, char* response);
 
 int id_carrello =-1;
 int id_cliente =-1;
-
-#define NUM_THREADS 5
 
 int main(int argc, char** argv) {
     srand(time(NULL));
@@ -56,16 +45,8 @@ int main(int argc, char** argv) {
         char request[MAX_REQUEST_SIZE];
         char response[MAX_RESPONSE_SIZE];
 
-        if(argc == 2 && strcmp(argv[1], "autopilota") == 0) {
-            pthread_t threads[NUM_THREADS];
-            for (int i = 0; i < NUM_THREADS; i++) {
-                printf("Creazione thread %d\n", i);
-                usleep(100000 + rand() % 5000000);
-                pthread_create(&threads[i], NULL, (void *) autopilota, NULL);
-            }
-            for (int i = 0; i < NUM_THREADS; i++) {
-                pthread_join(threads[i], NULL);
-            }
+        if(argc == 2 && strcmp(argv[1], "autopilota") == 0){
+            autopilota(request, response);
             exit(0);
         } else {
             system("clear");        
@@ -94,7 +75,6 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-
 int create_socket(){
     int sockfd;
     struct sockaddr_in server_address;
@@ -106,12 +86,8 @@ int create_socket(){
 
     // Set server address
     server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(SERVER_PORT);
-
-    if (inet_pton(AF_INET, SERVER_IP, &server_address.sin_addr) <= 0) {
-        perror("Invalid address");
-        exit(1);
-    }
+    server_address.sin_port = htons(5050);
+    server_address.sin_addr.s_addr = inet_addr("13.39.85.223");
 
     // Connect to server
     if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) {
@@ -122,32 +98,28 @@ int create_socket(){
     return sockfd;
 }
 
-
-
-void autopilota() {
-    char request[MAX_REQUEST_SIZE];
-    char response[MAX_RESPONSE_SIZE];
+void autopilota(char* request, char* response){
     int posizione=-1;
     int app;
-    printf("Thread autopilota\n");
-
-    do {
+    int random = (rand() % 50) + 10;
+    sleep(random/10);
+    do{
         ingresso(request,response);
         if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
-        sleep(7);
-    } while(posizione!=0);
+        sleep(5);
+    }while(posizione!=0);
 
-    do {
+    do{
         entra(request,response);
-        sleep(7);
-    } while(id_carrello==-1);
-      
+        sleep(5);
+    }while(id_carrello==-1);
+        
     aggiungi_con_id(request,response,1);
-    sleep(2);
+    sleep(1);
     aggiungi_con_id(request,response,2);
-    sleep(2);
+    sleep(1);
     aggiungi_con_id(request,response,1);
-    sleep(2);
+    sleep(1);
     stampa(request,response);
 
     posizione=-1;
@@ -155,12 +127,12 @@ void autopilota() {
     do{
         mettiInCoda(request,response);
         sscanf(response, "%d\n", &posizione);
-        sleep(7);
+        sleep(5);
     }while(posizione!=0);
 
     do{
         paga(request,response);
-        sleep(7);
+        sleep(5);
     }while((strcmp(response,"Carrello in elaborazione\n"))==0);
         
     esci(request,response);

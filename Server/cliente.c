@@ -76,7 +76,6 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t
 bool puoEntrare(coda_ingresso_t* coda_ingresso){
     int Num = get_n_clienti();
     int fila = numero_clienti_coda_ingresso(coda_ingresso);
-
     if (Num==VARIABILE_C) allow=false;
     if (Num<=VARIABILE_C-VARIABILE_E) allow=true;
     if (allow){
@@ -163,7 +162,7 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
         //printf("[TEST-CODACASSE] Cliente %d si è messo in coda. Clienti in coda: %d\n", id, numero_clienti_coda(casse));
     }
     int position = posizione_cliente_coda(id, casse);
-    if(position == 0 && carrelli[id].status == IN_CODA) {
+    if(position <= 0 && carrelli[id].status == IN_CODA) {
         pthread_mutex_unlock(&carrelli[id].mutex);
     }
     sprintf(response, "%d\n", position);

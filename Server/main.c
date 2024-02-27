@@ -26,11 +26,6 @@ pthread_mutex_t mutex_chiocciola;
 pthread_mutex_t mutex_carrelli;
 pthread_mutex_t mutex_cassieri;
 
-#define PORT 5050
-#define MAX_CONNECTIONS 10
-#define MAX_REQUEST_SIZE 1024
-#define MAX_RESPONSE_SIZE 1024
-
 typedef struct {
     int socket;
     struct sockaddr_in address;
@@ -51,7 +46,7 @@ int main(int argc, char** argv) {
     printf("[SERVER] Inizializzo carrelli\n");
     inizializza_carrelli(carrelli);
     printf("[SERVER] Entrano i cassieri\n");
-    for(int i=0; i<N_CASSE; i++) cassiereEntra(5, 2, carrelli, &coda_casse);
+    for(int i=0; i<N_CASSE; i++) cassiereEntra(i, 5, 2, carrelli, &coda_casse);
     int server_socket = 0;
     int client_socket = 0;
     struct sockaddr_in server_address;
@@ -105,20 +100,20 @@ void* process(void * ptr) {
 
     // Processo la richiesta
     if(strstr(request, "cliente") != NULL) {
-        printf("[CLIENTE] Request: %s\n", request);
+        //printf("[CLIENTE] Request: %s\n", request);
         clienteParser(request, response, carrelli, &coda_casse, &coda_ingresso);
-        printf("[SERVER] Response sent: %s", response);
+        //printf("[SERVER] Response sent: %s", response);
     } else if(strstr(request, "cassiere") != NULL) {
-        printf("[CASSIERE] Request: %s\n", request);
+        //printf("[CASSIERE] Request: %s\n", request);
         strcpy(response, "cassiere ok");
-        printf("[SERVER] Response sent: %s", response);
+        //printf("[SERVER] Response sent: %s", response);
     }
     else if(strstr(request, "catalogo") != NULL) {
-        printf("[ANONIMO] Request: %s\n", request);
+        //printf("[ANONIMO] Request: %s\n", request);
         inviaCatalogo(response);
-        printf("[SERVER] Response sent: catalogo\n");
+        //printf("[SERVER] Response sent: catalogo\n");
     }
-    else printf("Richiesta non valida\n"); 
+    else printf("Richiesta non valida: %s\n", request); 
     
     // Invio la risposta al client
     send_response(socket, response);
@@ -169,6 +164,7 @@ void* riordinaCarrelli() {
             }
         }
     }
+    return NULL;
 }
 
 void* buttafuoriAllIngresso(){
@@ -186,15 +182,20 @@ void* buttafuoriAllIngresso(){
         }
         pthread_mutex_unlock(&mutex_coda_ingresso);
     }
+    return NULL;
 }
 
 void* ui(){
-    int n = 0;
+    int update = 0;
     while(1){
-        printf("\033[H\033[J");
-        printf("Update %d\n", ++n);
+        // printf("\033[H\033[J");
+        system("clear");
+        fflush(stdout);
+        printf("Update: %d\n", ++update);
+        fflush(stdout);
         int p_in_negozio = 0;
         int p_in_cassa = 0;
+        
         for(int i = 0; i < VARIABILE_C; i++) {
             if (carrelli[i].status == IN_NEGOZIO) {
                 p_in_negozio++;
@@ -203,14 +204,21 @@ void* ui(){
                 p_in_cassa++;
             }
         }
+        
         printf("\nFUORI:\n");
+        fflush(stdout);
         int p_in_coda = numero_clienti_coda_ingresso(&coda_ingresso);
         stampa_stickman(p_in_coda);
-        printf("IN NEGOZIO:\n");
+        int p_in_coda_cassa = numero_clienti_coda(&coda_casse);
+        printf("\nIN NEGOZIO:\n");
         stampa_stickman(p_in_negozio);
-        p_in_coda = numero_clienti_coda(&coda_casse);
+        printf("\n");
+        fflush(stdout);
         printf("IN CODA:\n");
-        stampa_stickman(p_in_coda);
+        fflush(stdout);
+        stampa_stickman(p_in_coda_cassa);
+        printf("\n");
+        fflush(stdout);
         printf("IN CASSA:\n");
         stampa_stickman(p_in_cassa);
         printf("\n");
@@ -240,4 +248,5 @@ void stampa_stickman(int num_stickman) {
         }
         printf("\n");
     }
+    fflush(stdout);
 }

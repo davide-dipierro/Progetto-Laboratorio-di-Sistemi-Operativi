@@ -9,6 +9,7 @@
 #include "config.h"
 
 typedef struct {
+    int id;
     int tempoCassiere;
     int tempoElaborazioneProdotto;
     carrello_t* carrelli;
@@ -17,7 +18,7 @@ typedef struct {
 
 extern pthread_mutex_t mutex_cassieri;
 
-void cassiereEntra(int, int, carrello_t*, coda_casse_t*);
+void cassiereEntra(int, int, int, carrello_t*, coda_casse_t*);
 void* aspettaFila(void*);
 void* elaboraCarrello(void*);
 

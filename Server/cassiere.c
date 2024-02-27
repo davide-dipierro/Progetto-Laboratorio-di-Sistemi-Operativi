@@ -1,8 +1,9 @@
 #include "cassiere.h"
 
-void cassiereEntra(int tempoCassiere, int tempoElaborazioneProdotto, carrello_t* carrelli, coda_casse_t* coda_casse) {
+void cassiereEntra(int id, int tempoCassiere, int tempoElaborazioneProdotto, carrello_t* carrelli, coda_casse_t* coda_casse) {
     pthread_t thread_cassiere;
     cassiere_t* cassiere = (cassiere_t*)malloc(sizeof(cassiere_t));
+    cassiere->id = id;
     cassiere->tempoCassiere = tempoCassiere;
     cassiere->tempoElaborazioneProdotto = tempoElaborazioneProdotto;
     cassiere->carrelli = carrelli;
@@ -17,10 +18,10 @@ void* aspettaFila(void* ptr) {
         pthread_t thread_elabora_carrello;
         pthread_mutex_lock(&mutex_cassieri);
         if(coda_casse->head != NULL) { 
-            printf("[CASSIERE] C'è qualcuno in fila\n");
+            printf("[CASSIERE %d] C'è qualcuno in fila\n", cassiere->id);
             if(pthread_create(&thread_elabora_carrello, NULL, elaboraCarrello, (void*)cassiere) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
             pthread_join(thread_elabora_carrello, NULL);
-            printf("[CASSIERE] Carrello elaborato\n");
+            printf("[CASSIERE %d] Carrello elaborato\n", cassiere->id);
         } else {
             pthread_mutex_unlock(&mutex_cassieri);
         }
@@ -36,8 +37,8 @@ void* elaboraCarrello(void* ptr) {
     int id = coda_casse->head->id_cliente;
     rimuovi_cliente_coda_id(id, coda_casse);
     pthread_mutex_unlock(&mutex_cassieri);
-    carrelli[id].status = IN_CASSA;
     pthread_mutex_lock(&carrelli[id].mutex);
+    carrelli[id].status = IN_CASSA;
     for(int i = 0; i < carrelli[id].n_prodotti; i++) sleep(cassiere->tempoElaborazioneProdotto);
     sleep(cassiere->tempoCassiere);
     carrelli[id].status = PAGAMENTO;
