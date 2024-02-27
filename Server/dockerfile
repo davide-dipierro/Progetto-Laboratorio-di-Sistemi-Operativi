@@ -14,4 +14,4 @@ RUN gcc -Wall -Wextra -fsanitize=address -pthread -o server main.c codaCassa.c c
 EXPOSE 5050
 
 # Avvia il server
-CMD ["./server", "UI"]
+CMD ["./server", "NOUI"]

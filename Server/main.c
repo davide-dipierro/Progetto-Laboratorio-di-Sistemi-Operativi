@@ -189,8 +189,10 @@ void* buttafuoriAllIngresso(){
 }
 
 void* ui(){
+    int n = 0;
     while(1){
         printf("\033[H\033[J");
+        printf("Update %d\n", ++n);
         int p_in_negozio = 0;
         int p_in_cassa = 0;
         for(int i = 0; i < VARIABILE_C; i++) {

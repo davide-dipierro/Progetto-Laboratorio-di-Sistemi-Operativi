@@ -1,5 +1,7 @@
+#!/bin/bash
+
 for i in $(seq 1 $1);
 do
-	$(./a.out autopilota >> log$i)&
+	./cliente autopilota
 	sleep 0.1
 done

@@ -4,13 +4,30 @@ services:
   serverlso:
     build:
       context: ./Server
-      dockerfile: dockerfile  # Assicurati che il nome del tuo file Dockerfile sia corretto
+      dockerfile: dockerfile 
     container_name: serverlso
     ports:
       - "5050:5050"
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.0.10
 
   clientlso:
     build:
       context: ./Cliente
-      dockerfile: dockerfile  # Assicurati che il nome del tuo file Dockerfile sia corretto
+      dockerfile: dockerfile 
     container_name: clientlso
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.0.7
+    depends_on:
+      - serverlso
+
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.0.0/24
+

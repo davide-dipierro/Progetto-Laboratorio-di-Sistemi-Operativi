@@ -22,75 +22,39 @@
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 5050
 
-typedef struct {
-    char request[MAX_REQUEST_SIZE];
-    char response[MAX_RESPONSE_SIZE];
-} RequestResponse;
-
 void send_request(int socket, char * request);
 void read_response(int socket, char * response);
 
 int getScelta();
 void printmenu();
 
-void ingresso(char* request, char* response);
-void entra(char* request, char* response);
-void esci(char* request, char* response);
-void aggiungi(char* request, char* response);
-void rimuovi(char* request, char* response);
-void stampa(char* request, char* response);
-void mettiInCoda(char* request, char* response);
-void paga(char* request, char* response);
-void stampaCatalogo(char* request, char* response);
-void aggiungi_con_id(char* request, char* response, int id_prodotto);
+void ingresso(char* request, char* response, int* id_cliente, int* id_carrello);
+void entra(char* request, char* response, int* id_cliente, int* id_carrello);
+void esci(char* request, char* response, int* id_cliente, int* id_carrello);
+void aggiungi(char* request, char* response, int* id_cliente, int* id_carrello);
+void rimuovi(char* request, char* response, int* id_cliente, int* id_carrello);
+void stampa(char* request, char* response, int* id_cliente, int* id_carrello);
+void mettiInCoda(char* request, char* response, int* id_cliente, int* id_carrello);
+void paga(char* request, char* response, int* id_cliente, int* id_carrello);
+void stampaCatalogo(char* request, char* response, int* id_cliente, int* id_carrello);
+void aggiungi_con_id(char* request, char* response, int* id_cliente, int* id_carrello, int id_prodotto);
 void autopilota();
-
-int id_carrello =-1;
-int id_cliente =-1;
 
 #define NUM_THREADS 5
 
 int main(int argc, char** argv) {
     srand(time(NULL));
-    while (1){
-        char request[MAX_REQUEST_SIZE];
-        char response[MAX_RESPONSE_SIZE];
 
-        if(argc == 2 && strcmp(argv[1], "autopilota") == 0) {
-            pthread_t threads[NUM_THREADS];
-            for (int i = 0; i < NUM_THREADS; i++) {
-                printf("Creazione thread %d\n", i);
-                usleep(100000 + rand() % 5000000);
-                pthread_create(&threads[i], NULL, (void *) autopilota, NULL);
-            }
-            for (int i = 0; i < NUM_THREADS; i++) {
-                pthread_join(threads[i], NULL);
-            }
-            exit(0);
-        } else {
-            system("clear");        
-            int scelta = getScelta();
-            switch (scelta) {
-                case 1: ingresso(request,response); break;
-                case 2: entra(request, response); break;
-                case 3: stampaCatalogo(request, response); break;
-                case 4: aggiungi(request, response); break;
-                case 5: rimuovi(request, response); break;
-                case 6: stampa(request, response); break;
-                case 7: mettiInCoda(request, response); break;
-                case 8: paga(request, response); break;
-                case 9: esci(request, response); exit(0);
-            }
-            printf("Richiesta: %s\n", request);
-            printf("Risposta: %s\n", response);
-            memset(response, 0, MAX_RESPONSE_SIZE);
-            printf("Premi invio per continuare...");
-            getchar();
-            getchar();
-    
-        }
-                
+    pthread_t threads[NUM_THREADS];
+    for (int i = 0; i < NUM_THREADS; i++) {
+        printf("Creazione thread %d\n", i);
+        pthread_create(&threads[i], NULL, (void *) autopilota, NULL);
+        //sleep(1);
     }
+    for (int i = 0; i < NUM_THREADS; i++) {
+        pthread_join(threads[i], NULL);
+    }
+    
     return 0;
 }
 
@@ -129,45 +93,49 @@ void autopilota() {
     char response[MAX_RESPONSE_SIZE];
     int posizione=-1;
     int app;
+
+    int id_carrello=-1;
+    int id_cliente=-1;
+
     printf("Thread autopilota\n");
+    
 
     do {
-        ingresso(request,response);
+        ingresso(request,response, &id_cliente, &id_carrello);
         if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
         sleep(7);
     } while(posizione!=0);
 
     do {
-        entra(request,response);
+        entra(request,response, &id_cliente, &id_carrello);
         sleep(7);
     } while(id_carrello==-1);
       
-    aggiungi_con_id(request,response,1);
+    aggiungi_con_id(request,response, &id_cliente, &id_carrello, 1);
     sleep(2);
-    aggiungi_con_id(request,response,2);
+    aggiungi_con_id(request,response, &id_cliente, &id_carrello, 2);
     sleep(2);
-    aggiungi_con_id(request,response,1);
+    aggiungi_con_id(request,response, &id_cliente, &id_carrello, 1);
     sleep(2);
-    stampa(request,response);
+    stampa(request,response, &id_cliente, &id_carrello);
 
     posizione=-1;
 
     do{
-        mettiInCoda(request,response);
+        mettiInCoda(request,response, &id_cliente, &id_carrello);
         sscanf(response, "%d\n", &posizione);
         sleep(7);
     }while(posizione!=0);
 
     do{
-        paga(request,response);
+        paga(request,response, &id_cliente, &id_carrello);
         sleep(7);
     }while((strcmp(response,"Carrello in elaborazione\n"))==0);
         
-    esci(request,response);
-    exit(0);
+    esci(request,response, &id_cliente, &id_carrello);
 }
 
-void aggiungi_con_id(char* request, char* response, int id_prodotto){
+void aggiungi_con_id(char* request, char* response, int* id_cliente, int* id_carrello, int id_prodotto){
     int sockfd=create_socket();
     char nome_prodotto[50];
     float prezzo_prodotto;
@@ -226,7 +194,7 @@ void printmenu() {
     printf("9. Esci dal negozio\n");
 }
 
-void ingresso(char* request, char* response){
+void ingresso(char* request, char* response, int* id_cliente, int* id_carrello){
     int position=-1;
     int sockfd=create_socket();
     sprintf(request, "cliente:%d:ingresso\n", id_cliente);
@@ -237,7 +205,7 @@ void ingresso(char* request, char* response){
     close(sockfd);
 }
 
-void entra(char* request, char* response) {
+void entra(char* request, char* response, int* id_cliente, int* id_carrello) {
     int sockfd=create_socket();
     sprintf(request, "cliente:%d:entra\n", id_carrello);
     send_request(sockfd, request);
@@ -247,7 +215,7 @@ void entra(char* request, char* response) {
     close(sockfd);
 }
 
-void esci(char* request, char* response) {
+void esci(char* request, char* response, int* id_cliente, int* id_carrello) {
     int sockfd=create_socket();
     sprintf(request, "cliente:%d:esce\n", id_carrello);
     send_request(sockfd, request);
@@ -256,7 +224,7 @@ void esci(char* request, char* response) {
     close(sockfd);
 }
 
-void stampaCatalogo(char* request, char* response) {
+void stampaCatalogo(char* request, char* response, int* id_cliente, int* id_carrello) {
     int sockfd=create_socket();
     sprintf(request, "catalogo\n");
     send_request(sockfd, request);
@@ -266,7 +234,7 @@ void stampaCatalogo(char* request, char* response) {
 }
 
 
-void aggiungi(char* request, char* response) {
+void aggiungi(char* request, char* response, int* id_cliente, int* id_carrello) {
     int id_prodotto;
     printf("1. Pasta\n");
     printf("2. Latte\n");
@@ -281,10 +249,10 @@ void aggiungi(char* request, char* response) {
 
     printf("Inserisci l'ID del prodotto: ");
     scanf("%d", &id_prodotto);
-    aggiungi_con_id(request,response,id_prodotto);
+    aggiungi_con_id(request,response, id_cliente, id_carrello, id_prodotto);
 }
 
-void rimuovi(char* request, char* response) {
+void rimuovi(char* request, char* response, int* id_cliente, int* id_carrello) {
     int sockfd=create_socket();
     int id_prodotto;
     printf("Inserisci l'ID del prodotto da rimuovere: ");
@@ -296,7 +264,7 @@ void rimuovi(char* request, char* response) {
     close(sockfd);
 }
 
-void stampa(char* request, char* response) {
+void stampa(char* request, char* response, int* id_cliente, int* id_carrello) {
     int sockfd=create_socket();
     sprintf(request, "cliente:%d:stampa", id_carrello);
     send_request(sockfd, request);
@@ -305,7 +273,7 @@ void stampa(char* request, char* response) {
     close(sockfd);
 }
 
-void mettiInCoda(char* request, char* response) {
+void mettiInCoda(char* request, char* response, int* id_cliente, int* id_carrello) {
     int sockfd=create_socket();
     sprintf(request, "cliente:%d:coda", id_carrello);
     send_request(sockfd, request);
@@ -314,7 +282,7 @@ void mettiInCoda(char* request, char* response) {
     close(sockfd);
 }
 
-void paga(char* request, char* response) {
+void paga(char* request, char* response, int* id_cliente, int* id_carrello) {
     int sockfd=create_socket();
     sprintf(request, "cliente:%d:paga", id_carrello);
     send_request(sockfd, request);
