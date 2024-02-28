@@ -14,7 +14,7 @@ services:
 
   clientlso:
     build:
-      context: ./Cliente
+      context: ./Client
       dockerfile: Dockerfile
     container_name: clientlso
     networks:
