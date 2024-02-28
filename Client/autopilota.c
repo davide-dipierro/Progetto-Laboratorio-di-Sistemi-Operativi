@@ -57,8 +57,8 @@ int create_socket(){
     // Set server address
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(5050);
-    server_address.sin_addr.s_addr = inet_addr("172.20.0.2");
-    // server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    // server_address.sin_addr.s_addr = inet_addr("172.20.0.2");
+    server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 
     // Connect to server

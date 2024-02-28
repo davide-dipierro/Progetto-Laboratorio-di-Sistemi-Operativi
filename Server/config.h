@@ -10,6 +10,14 @@
 #define N_CASSE 2
 #endif
 
+#ifndef ADDETTO_ATTIVO
+#define ADDETTO_ATTIVO 0
+#endif
+
+#ifndef BUTTAFUORI_ATTIVO
+#define BUTTAFUORI_ATTIVO 0
+#endif
+
 #ifndef TIMER_PULIZIA_CARRELLI
 #define TIMER_PULIZIA_CARRELLI 100
 #endif
@@ -23,6 +31,6 @@
 #endif
 
 #define PORT 5050
-#define MAX_CONNECTIONS 100
+#define MAX_CONNECTIONS 30
 #define MAX_REQUEST_SIZE 1024
 #define MAX_RESPONSE_SIZE 1024

@@ -133,24 +133,20 @@ void read_request(int socket, char* request) {
 }
 
 void inviaCatalogo(char* response) {
-    //printf("Richiesta catalogo\n");
-    // Apro il file catalogo.txt
     FILE* catalogo = fopen("catalogo.json", "r");
     if(catalogo == NULL) perror("Errore apertura catalogo"), exit(1);
 
-    // Leggo il file catalogo.txt e lo salvo nella stringa response
     char buffer[MAX_RESPONSE_SIZE];
     while(fgets(buffer, MAX_RESPONSE_SIZE, catalogo) != NULL) {
         strcat(response, buffer);
     }
-
-    // Chiudo il file catalogo.txt
+    
     fclose(catalogo);
     
 }
 
 void* riordinaCarrelli() {
-    while(1) {
+    while(ADDETTO_ATTIVO) {
         sleep(TIMER_PULIZIA_CARRELLI); 
         printf("[ADDETTO] Riordino carrelli\n");
         for(int i = 0; i < VARIABILE_C; i++) {
@@ -168,7 +164,7 @@ void* riordinaCarrelli() {
 }
 
 void* buttafuoriAllIngresso(){
-    while(1) {
+    while(BUTTAFUORI_ATTIVO) {
         sleep(TIMER_BUTTAFUORI); 
         printf("[BUTTAFUORI] Controllo se ci sono ancora tutti\n");
         pthread_mutex_lock(&mutex_coda_ingresso);
