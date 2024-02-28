@@ -188,8 +188,8 @@ void* buttafuoriAllIngresso(){
 void* ui(){
     int update = 0;
     while(1){
-        // printf("\033[H\033[J");
-        system("clear");
+        printf("\033[H\033[J");
+        //system("clear");
         fflush(stdout);
         printf("Update: %d\n", ++update);
         fflush(stdout);

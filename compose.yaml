@@ -4,7 +4,7 @@ services:
   serverlso:
     build:
       context: ./Server
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     container_name: serverlso
     networks:
       mynetwork:
@@ -15,7 +15,7 @@ services:
   clientlso:
     build:
       context: ./Cliente
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     container_name: clientlso
     networks:
       mynetwork:

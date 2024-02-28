@@ -35,7 +35,7 @@ void autopilota(char* request, char* response);
 int id_carrello =-1;
 int id_cliente =-1;
 
-int main(int argc, char** argv) {
+int main() {
     srand(time(NULL));
     char request[MAX_REQUEST_SIZE];
     char response[MAX_RESPONSE_SIZE];
@@ -58,6 +58,8 @@ int create_socket(){
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(5050);
     server_address.sin_addr.s_addr = inet_addr("172.20.0.2");
+    // server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+
 
     // Connect to server
     if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) {
@@ -83,11 +85,11 @@ void autopilota(char* request, char* response){
     }while(id_carrello==-1);
         
     aggiungi_con_id(request,response,1);
-    sleep(1);
+    sleep(2);
     aggiungi_con_id(request,response,2);
-    sleep(1);
+    sleep(2);
     aggiungi_con_id(request,response,1);
-    sleep(1);
+    sleep(2);
     stampa(request,response);
 
     posizione=-1;
