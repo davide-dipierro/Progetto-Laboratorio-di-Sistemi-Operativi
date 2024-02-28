@@ -63,7 +63,6 @@ int main(int argc, char** argv) {
         printf("[SERVER] Thread UI creato\n");
     }
 
-
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) perror("Could not create socket"), exit(EXIT_FAILURE);
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
@@ -80,8 +79,12 @@ int main(int argc, char** argv) {
         // Se non riesco ad accettare la connessione, stampo un messaggio di errore e termino il programma
         if (client_socket < 0) perror("Could not establish new connection"), exit(EXIT_FAILURE);
 
+        // Allocazione dinamica per passare il descrittore del socket al thread
+        int *client_socket_ptr = malloc(sizeof(int));
+        *client_socket_ptr = client_socket;
+
         // Creo un thread per gestire la connessione
-        if (pthread_create(&thread_client, NULL, process, (void *)&client_socket) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
+        if (pthread_create(&thread_client, NULL, process, (void *)client_socket_ptr) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     }
 
     return 0;
@@ -89,6 +92,8 @@ int main(int argc, char** argv) {
 
 void* process(void * ptr) {
     int socket = *((int *) ptr);
+    free(ptr); // Liberazione della memoria allocata per il descrittore del socket
+
     char request[MAX_REQUEST_SIZE];
     char response[MAX_RESPONSE_SIZE];
 
@@ -124,12 +129,12 @@ void* process(void * ptr) {
 
 void send_response(int socket, char* response) {
     //printf("[TEST-SEND] Invio risposta: %s\n", response);
-    if(write(socket, response, strlen(response)) == -1) perror("Write"), exit(1);
+    if(send(socket, response, strlen(response), 0) == -1) perror("Send"), exit(1);
     //printf("[TEST-SEND] Risposta inviata\n");
 }
 
 void read_request(int socket, char* request) {
-    if(read(socket, request, MAX_REQUEST_SIZE) == -1) perror("Read"), exit(1);
+    if(recv(socket, request, MAX_REQUEST_SIZE, 0) == -1) perror("Recv"), exit(1);
 }
 
 void inviaCatalogo(char* response) {
