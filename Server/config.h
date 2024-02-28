@@ -11,11 +11,11 @@
 #endif
 
 #ifndef ADDETTO_ATTIVO
-#define ADDETTO_ATTIVO 0
+#define ADDETTO_ATTIVO 1
 #endif
 
 #ifndef BUTTAFUORI_ATTIVO
-#define BUTTAFUORI_ATTIVO 0
+#define BUTTAFUORI_ATTIVO 1
 #endif
 
 #ifndef TIMER_PULIZIA_CARRELLI
