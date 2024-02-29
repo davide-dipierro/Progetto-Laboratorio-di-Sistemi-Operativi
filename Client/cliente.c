@@ -45,31 +45,26 @@ int main(int argc, char** argv) {
         char request[MAX_REQUEST_SIZE];
         char response[MAX_RESPONSE_SIZE];
 
-        if(argc == 2 && strcmp(argv[1], "autopilota") == 0){
-            autopilota(request, response);
-            exit(0);
-        } else {
-            system("clear");        
-            int scelta = getScelta();
-            switch (scelta) {
-                case 1: ingresso(request,response); break;
-                case 2: entra(request, response); break;
-                case 3: stampaCatalogo(request, response); break;
-                case 4: aggiungi(request, response); break;
-                case 5: rimuovi(request, response); break;
-                case 6: stampa(request, response); break;
-                case 7: mettiInCoda(request, response); break;
-                case 8: paga(request, response); break;
-                case 9: esci(request, response); exit(0);
-            }
-            printf("Richiesta: %s\n", request);
-            printf("Risposta: %s\n", response);
-            memset(response, 0, MAX_RESPONSE_SIZE);
-            printf("Premi invio per continuare...");
-            getchar();
-            getchar();
-    
+        system("clear");        
+        int scelta = getScelta();
+        switch (scelta) {
+            case 1: ingresso(request,response); break;
+            case 2: entra(request, response); break;
+            case 3: stampaCatalogo(request, response); break;
+            case 4: aggiungi(request, response); break;
+            case 5: rimuovi(request, response); break;
+            case 6: stampa(request, response); break;
+            case 7: mettiInCoda(request, response); break;
+            case 8: paga(request, response); break;
+            case 9: esci(request, response); exit(0);
         }
+        printf("Richiesta: %s\n", request);
+        printf("Risposta: %s\n", response);
+        memset(response, 0, MAX_RESPONSE_SIZE);
+        printf("Premi invio per continuare...");
+        getchar();
+        getchar();
+
                 
     }
     return 0;
@@ -87,7 +82,7 @@ int create_socket(){
     // Set server address
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(5050);
-    server_address.sin_addr.s_addr = inet_addr("13.39.85.223");
+    server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     // Connect to server
     if (connect(sockfd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) {
@@ -96,47 +91,6 @@ int create_socket(){
     }
     
     return sockfd;
-}
-
-void autopilota(char* request, char* response){
-    int posizione=-1;
-    int app;
-    int random = (rand() % 50) + 10;
-    sleep(random/10);
-    do{
-        ingresso(request,response);
-        if (strstr(response, "ID_cliente") != NULL) sscanf(response, "ID_cliente:%d:%d\n", &app, &posizione);
-        sleep(5);
-    }while(posizione!=0);
-
-    do{
-        entra(request,response);
-        sleep(5);
-    }while(id_carrello==-1);
-        
-    aggiungi_con_id(request,response,1);
-    sleep(1);
-    aggiungi_con_id(request,response,2);
-    sleep(1);
-    aggiungi_con_id(request,response,1);
-    sleep(1);
-    stampa(request,response);
-
-    posizione=-1;
-
-    do{
-        mettiInCoda(request,response);
-        sscanf(response, "%d\n", &posizione);
-        sleep(5);
-    }while(posizione!=0);
-
-    do{
-        paga(request,response);
-        sleep(5);
-    }while((strcmp(response,"Carrello in elaborazione\n"))==0);
-        
-    esci(request,response);
-    exit(0);
 }
 
 void aggiungi_con_id(char* request, char* response, int id_prodotto){
