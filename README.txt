@@ -9,6 +9,10 @@ ProgettoLSO
 │   └── cliente.c-----------------------------> File sorgente del client da terminale
 │
 ├── Server
+│   ├── app-debug.apk-------------------------> File per l'installazione dell'applicazione su Android (Non firmata)
+│   ...---------------------------------------> Tanti altri file...
+│
+├── Server
 │   ├── Dockerfile----------------------------> File per la creazione dell'immagine del server
 │   ├── Makefile------------------------------> File per la compilazione del server
 │   ├── carrello.c----------------------------> File sorgente del carrello
