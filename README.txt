@@ -122,4 +122,4 @@ Il client si connetterà automaticamente al server e lancererà 20 autopiloti.
 # AUTORI
 
     - Davide Di Pierro (N86004755)
-    - Emilia Napolano (N86004756)
+    - Emilia Napolano (N86004758)
