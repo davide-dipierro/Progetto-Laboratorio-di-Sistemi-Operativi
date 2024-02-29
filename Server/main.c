@@ -15,6 +15,7 @@
 #include "config.h"
 #include "cassiere.h"
 #include "codaIngresso.h"
+#include "direttore.h"
 
 carrello_t carrelli[VARIABILE_C];
 coda_casse_t coda_casse;
@@ -45,6 +46,9 @@ pthread_mutex_t mutex_cassieri = PTHREAD_MUTEX_INITIALIZER;
 int main(int argc, char** argv) {
     printf("[SERVER] Inizializzo carrelli\n");
     inizializza_carrelli(carrelli);
+    printf("[SERVER] Entra il direttore\n");
+    pthread_t thread_direttore;
+    if(pthread_create(&thread_direttore, NULL, controllaUscita, carrelli) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     printf("[SERVER] Entrano i cassieri\n");
     for(int i=0; i<N_CASSE; i++) cassiereEntra(i, 5, 2, carrelli, &coda_casse);
     int server_socket = 0;
@@ -196,14 +200,12 @@ void* ui(){
         fflush(stdout);
         int p_in_negozio = 0;
         int p_in_cassa = 0;
+        int p_in_uscita = 0;
         
         for(int i = 0; i < VARIABILE_C; i++) {
-            if (carrelli[i].status == IN_NEGOZIO) {
-                p_in_negozio++;
-            }
-            if (carrelli[i].status == IN_CASSA || carrelli[i].status == PAGAMENTO) {
-                p_in_cassa++;
-            }
+            if (carrelli[i].status == IN_NEGOZIO) p_in_negozio++;
+            if (carrelli[i].status == IN_CASSA || carrelli[i].status == PAGAMENTO) p_in_cassa++;
+            if (carrelli[i].status == CONFERMA) p_in_uscita++;
         }
         
         printf("\nFUORI:\n");
@@ -222,6 +224,10 @@ void* ui(){
         fflush(stdout);
         printf("IN CASSA:\n");
         stampa_stickman(p_in_cassa);
+        printf("\n");
+        fflush(stdout);
+        printf("USCITA SENZA ACQUISTI:\n");
+        stampa_stickman(p_in_uscita);
         printf("\n");
         fflush(stdout);
         sleep(1);

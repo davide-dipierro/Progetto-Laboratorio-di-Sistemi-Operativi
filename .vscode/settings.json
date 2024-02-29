@@ -14,7 +14,8 @@
         "codaingresso.h": "c",
         "codacassa.h": "c",
         "stdlib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "direttore.h": "c"
     },
     "sonarlint.connectedMode.project": {
         "connectionId": "http-home-davidedipierro-it-9000-",

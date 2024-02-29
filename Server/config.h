@@ -26,6 +26,10 @@
 #define TIMER_BUTTAFUORI 100
 #endif
 
+#ifndef TIMER_DIRETTORE
+#define TIMER_DIRETTORE 5
+#endif
+
 #ifndef TIMER_AGGIORNAMENTO_UI
 #define TIMER_AGGIORNAMENTO_UI 1
 #endif

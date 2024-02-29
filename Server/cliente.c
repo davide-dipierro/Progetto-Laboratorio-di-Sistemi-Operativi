@@ -153,6 +153,7 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
     //printf("Cliente %d si mette in coda\n", id);
     if(carrelli[id].n_prodotti == 0) {
         sprintf(response, "0\n");
+        pthread_mutex_unlock(&carrelli[id].mutex);
         return;
     }
     //printf("Status: %d == %d\n", carrelli[id].status, IN_NEGOZIO);
@@ -169,10 +170,11 @@ void clienteSiMetteInCodaAllaCassa(int id, char* response, carrello_t* carrelli,
 }
 
 void clientePaga(int id, char* response, carrello_t* carrelli) {
-    if(carrelli[id].status == PAGAMENTO || carrelli[id].status == PAGATO || (carrelli[id].status == IN_NEGOZIO && carrelli[id].n_prodotti == 0)) {
+    if(carrelli[id].status == PAGAMENTO || carrelli[id].status == PAGATO) {
         sprintf(response, "ok\n");
         carrelli[id].status = PAGATO;
     } else {
+        if (carrelli[id].status == IN_NEGOZIO && carrelli[id].n_prodotti == 0) carrelli[id].status = CONFERMA;
         sprintf(response, "Carrello in elaborazione\n");
     }
 }
