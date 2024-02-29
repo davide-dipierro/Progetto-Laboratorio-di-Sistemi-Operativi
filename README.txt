@@ -42,6 +42,16 @@ All'interno della directory del progetto è possibile compilare il client e il s
 
 Per la compilazione del client e del server è necessario avere installato il compilatore `gcc` e il gestore di pacchetti `make`.
 
+E' possibile compilare il client, il server e l'autopilota separatamente con i comandi:
+
+    make client
+    make server
+    make autopilota
+
+E' possibile eliminare i file oggetto e i file eseguibili con il comando:
+    
+    make clean
+
 
 
 
