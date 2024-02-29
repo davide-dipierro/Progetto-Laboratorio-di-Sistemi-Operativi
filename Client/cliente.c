@@ -39,7 +39,7 @@ void autopilota(char* request, char* response);
 int id_carrello =-1;
 int id_cliente =-1;
 
-int main(int argc, char** argv) {
+int main() {
     srand(time(NULL));
     while (1){
         char request[MAX_REQUEST_SIZE];
