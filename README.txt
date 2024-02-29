@@ -33,6 +33,7 @@ ProgettoLSO
 
 
 
+
 # ISTRUZIONI PER LA COMPILAZIONE
 
 All'interno della directory del progetto è possibile compilare il client e il server con il comando:
@@ -40,6 +41,7 @@ All'interno della directory del progetto è possibile compilare il client e il s
     make
 
 Per la compilazione del client e del server è necessario avere installato il compilatore `gcc` e il gestore di pacchetti `make`.
+
 
 
 
@@ -84,6 +86,7 @@ Si consiglia di avviare al massimo 20 autopiloti per evitare sovraccarichi al se
 
 
 
+
 # ISTRUZIONI PER DOCKER-COMPOSE
 
 Per avviare il progetto è necessario avere installato Docker e Docker-Compose.
@@ -98,6 +101,7 @@ Per terminare l'esecuzione del progetto è sufficiente premere `CTRL+C` e lancia
 L'immagine dell'autopilota e del server verranno create automaticamente e i container verranno avviati.
 I programmi saranno compilati e avviati automaticamente.
 Il client si connetterà automaticamente al server e lancererà 20 autopiloti.
+
 
 
 
