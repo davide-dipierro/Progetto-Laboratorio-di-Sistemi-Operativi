@@ -9,10 +9,6 @@ ProgettoLSO
 │   └── cliente.c-----------------------------> File sorgente del client da terminale
 │
 ├── Server
-│   ├── app-debug.apk-------------------------> File per l'installazione dell'applicazione su Android (Non firmata)
-│   ...---------------------------------------> Tanti altri file...
-│
-├── Server
 │   ├── Dockerfile----------------------------> File per la creazione dell'immagine del server
 │   ├── Makefile------------------------------> File per la compilazione del server
 │   ├── carrello.c----------------------------> File sorgente del carrello
@@ -33,8 +29,12 @@ ProgettoLSO
 │
 ├── Makefile----------------------------------> File per la compilazione dell'intero progetto
 ├── README.txt--------------------------------> Questo file
+├── app-debug.apk-----------------------------> File per l'installazione dell'applicazione su Android (Non firmata)
 └── compose.yaml------------------------------> File per la creazione dei container
 
+
+
+# IL CODICE SORGENTE DEL CLIENT ANDROID E' VISIBILE SU GITHUB NEL RAMO MASTER
 
 
 
