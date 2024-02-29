@@ -53,6 +53,7 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         Log.d("Request", request);
+        if(response == null) return;
         Log.d("Response", response);
         if (request.equals("catalogo")) processCatalogo();
         else if(request.contains("aggiungi")) processAcquisto();
@@ -114,8 +115,6 @@ public class ClientTask extends AsyncTask<Void, Void, Void> {
         StartActivity startActivity = (StartActivity) this.mainActivity;
         // Rimuovo il 'null' all'inizio della stringa
         response = response.substring(4);
-        startActivity.numero_chiocciola = Integer.parseInt(response.split(":")[1]);
-        startActivity.posizione = Integer.parseInt(response.split(":")[2]);
     }
 
     private void processPaga() {

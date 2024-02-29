@@ -14,7 +14,7 @@ import com.airbnb.lottie.LottieAnimationView;
 
 public class StartActivity extends AppCompatActivity {
 
-    int posizione = -1;
+    int posizione = 100;
     int numero_chiocciola = -1;
     Button buttonEntra;
     TextView textViewCoda;
@@ -32,19 +32,7 @@ public class StartActivity extends AppCompatActivity {
         textViewCoda = findViewById(R.id.textViewCodaIngresso);
         cartAnimation = findViewById(R.id.cartAnimation);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        if(wantToEnter) updateCoda();
-                        Thread.sleep(2000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+
 
 
     }
@@ -61,6 +49,8 @@ public class StartActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         textViewCoda.setVisibility(View.INVISIBLE);
         cartAnimation.setVisibility(View.INVISIBLE);
+        posizione = 100;
+        numero_chiocciola = -1;
     }
 
     public void enter_market(View view) {
@@ -69,52 +59,62 @@ public class StartActivity extends AppCompatActivity {
         textViewCoda.setVisibility(View.VISIBLE);
         cartAnimation.setVisibility(View.VISIBLE);
         wantToEnter = true;
+        updateCoda();
     }
 
     void updateCoda() {
-        runOnUiThread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                wantToEnter = false;
-                ClientTask clientTask = new ClientTask(StartActivity.this, "cliente:" + numero_chiocciola + ":ingresso");
-                clientTask.execute();
-                while(clientTask.response == null);
-                if (posizione == -1) {
-                    textViewCoda.setText("Ti stai mettendo in coda...");
-                } else {
-                    textViewCoda.setText("Posizione in coda: " + posizione);
-                }
-                if (posizione == 0) {
-                    textViewCoda.setText("È il tuo turno!");
-                    while(!checkEntra()) {
-                        try {
-                            Thread.sleep(4000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                while (posizione > 0) {
+                    try {
+                        ClientTask clientTask = new ClientTask(StartActivity.this, "cliente:" + numero_chiocciola + ":ingresso");
+                        clientTask.execute();
+                        while (clientTask.response == null) ;
+                        Log.d("UpdateCoda", clientTask.response);
+                        numero_chiocciola = Integer.parseInt(clientTask.response.split(":")[1]);
+                        posizione = Integer.parseInt(clientTask.response.split(":")[2]);
+                        Log.d("UpdateCoda", "Numero chiocciola: " + numero_chiocciola);
+                        Log.d("UpdateCoda", "Posizione: " + posizione);
+                        textViewCoda.setText("Posizione in coda: " + posizione);
+                        Thread.sleep(4000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    gotoMainActivity();
-                    return;
                 }
-                wantToEnter = true;
+                provaAdEntrare();
             }
-        });
+        }).start();
     }
 
-    boolean checkEntra() {
-        ClientTask clientTask = new ClientTask(this, "cliente:-1:entra");
-        clientTask.execute();
-        while(clientTask.response == null);
-        if (clientTask.response.contains("Non puoi entrare")) {
-            Log.d("CheckEntra", "Non puoi entrare");
-            textViewCoda.setText("Attendi che ci sia spazio nel supermercato...");
-            return false;
-        } else {
-            SharedPreferencesID.saveId(this, clientTask.response.split(":")[1]);
-            textViewCoda.setText("Puoi entrare!");
-            Log.d("CheckEntra", "Puoi entrare");
-            return true;
-        }
+    void provaAdEntrare() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean entrato = false;
+                do {
+                    textViewCoda.setText("Attendi che ci sia spazio nel supermercato...");
+                    ClientTask clientTask = new ClientTask(StartActivity.this, "cliente:-1:entra");
+                    clientTask.execute();
+                    while(clientTask.response == null);
+                    if (clientTask.response.contains("Non puoi entrare")) {
+                        Log.d("CheckEntra", "Non puoi entrare");
+                        entrato = false;
+                    } else {
+                        textViewCoda.setText("Puoi entrare!");
+                        Log.d("CheckEntra", "Puoi entrare");
+                        SharedPreferencesID.saveId(StartActivity.this, clientTask.response.split(":")[1]);
+                        entrato = true;
+                    }
+                    try {
+                        Thread.sleep(4000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }while(!entrato);
+                gotoMainActivity();
+            }
+        }).start();
     }
 
 
