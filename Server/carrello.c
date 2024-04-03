@@ -56,9 +56,7 @@ void stampa_carrello(char* stringa, carrello_t* carrello) {
     nodo_t_carr* nodo_carr_corrente = carrello->head;
 
     while (nodo_carr_corrente != NULL) {
-        char buffer[MAX_RESPONSE_SIZE]; // Create a buffer for the formatted string
-        sprintf(buffer, "%s{%d:%s:%f}\n", stringa, nodo_carr_corrente->prodotto.id, nodo_carr_corrente->prodotto.nome, nodo_carr_corrente->prodotto.prezzo);
-        strcat(stringa, buffer); // Append the formatted string to the original string
+        sprintf(stringa, "%s{%d:%s:%f}\n", stringa, nodo_carr_corrente->prodotto.id, nodo_carr_corrente->prodotto.nome, nodo_carr_corrente->prodotto.prezzo);
         nodo_carr_corrente = nodo_carr_corrente->next;
     }
 }

@@ -60,7 +60,7 @@ void clienteEntra(int* id, char* response, carrello_t* carrelli, coda_ingresso_t
     }else{
         printf("[BUTTAFUORI] Cliente %d può entrare\n", *id);
         rimuovi_cliente_coda_ingresso(coda_ingresso);
-        ////printf("[TEST] Cliente %d rimosso dalla coda di ingresso\n", *id);
+        //printf("[TEST] Cliente %d rimosso dalla coda di ingresso\n", *id);
         incrementa_n_clienti();
         int i = 0;
         while(i < VARIABILE_C && carrelli[i].status != LIBERO) i++;

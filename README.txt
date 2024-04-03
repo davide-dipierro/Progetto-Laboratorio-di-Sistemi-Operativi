@@ -1,4 +1,12 @@
-# CONTENUTO DELLA DIRECTORY
+# CONFIGURAZIONE DI DEFAULT #
+
+Numero casse: 2
+Variabile C (Massimo numero di clienti): 10
+Variabile E (Range di variazione del numero di client): 3
+
+
+
+# CONTENUTO DELLA DIRECTORY #
 
 ProgettoLSO
 ├── Client
@@ -34,11 +42,11 @@ ProgettoLSO
 
 
 
-# IL CODICE SORGENTE DEL CLIENT ANDROID E' VISIBILE SU GITHUB NEL RAMO MASTER
+# IL CODICE SORGENTE DEL CLIENT ANDROID E' VISIBILE SU GITHUB NEL RAMO MASTER #
 
 
 
-# ISTRUZIONI PER LA COMPILAZIONE
+# ISTRUZIONI PER LA COMPILAZIONE #
 
 All'interno della directory del progetto è possibile compilare il client e il server con il comando:
 
@@ -59,7 +67,7 @@ E' possibile eliminare i file oggetto e i file eseguibili con il comando:
 
 
 
-# ISTRUZIONI PER L'ESECUZIONE
+# ISTRUZIONI PER L'ESECUZIONE #
 
 Una volta compilati i programmi, è possibile avviare il server con il comando:
 
@@ -101,7 +109,7 @@ Si consiglia di avviare al massimo 20 autopiloti per evitare sovraccarichi al se
 
 
 
-# ISTRUZIONI PER DOCKER-COMPOSE
+# ISTRUZIONI PER DOCKER-COMPOSE #
 
 Per avviare il progetto è necessario avere installato Docker e Docker-Compose.
 Una volta installati, posizionarsi nella directory del progetto e lanciare il comando:
@@ -119,7 +127,16 @@ Il client si connetterà automaticamente al server e lancererà 20 autopiloti.
 
 
 
-# AUTORI
+# AUTORI #
 
     - Davide Di Pierro (N86004755)
     - Emilia Napolano (N86004758)
+
+
+
+# DISCLAIMER #
+
+Attualmente all'interno della schermata principale del client Android è presente una textbox che permette di inserire
+l'indirizzo IP del server, ciò è stato introdotto al solo scopo di ridurre le ore di utilizzo del server di AWS e non 
+è da ritenersi parte del prodotto finale.
+
