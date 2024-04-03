@@ -16,6 +16,8 @@ ProgettoLSO
 │   ├── autopilota.sh-------------------------> Script per il lancio di più autopiloti
 │   └── cliente.c-----------------------------> File sorgente del client da terminale
 │
+├── ClientAndroid.zip-------------------------> Cartella compressa con il codice sorgente del client Android
+│
 ├── Server
 │   ├── Dockerfile----------------------------> File per la creazione dell'immagine del server
 │   ├── Makefile------------------------------> File per la compilazione del server
@@ -37,7 +39,7 @@ ProgettoLSO
 │
 ├── Makefile----------------------------------> File per la compilazione dell'intero progetto
 ├── README.txt--------------------------------> Questo file
-├── app-debug.apk-----------------------------> File per l'installazione dell'applicazione su Android (Non firmata)
+├── app-debug.apk-----------------------------> File per l'installazione dell'applicazione su Android
 └── compose.yaml------------------------------> File per la creazione dei container
 
 
