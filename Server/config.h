@@ -10,6 +10,14 @@
 #define N_CASSE 2
 #endif
 
+#ifndef TEMPO_CASSIERE
+#define TEMPO_CASSIERE 5
+#endif
+
+#ifndef TEMPO_PRODOTTO 2
+#define TEMPO_PRODOTTO 2
+#endif
+
 #ifndef ADDETTO_ATTIVO
 #define ADDETTO_ATTIVO 1
 #endif

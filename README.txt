@@ -3,6 +3,8 @@
 Numero casse: 2
 Variabile C (Massimo numero di clienti): 10
 Variabile E (Range di variazione del numero di client): 3
+Tempo cassiere (Tempo che un cassiere attende tra un cliente ed un altro): 5s
+Tempo prodotto (Tempo che un cassiere impiega per elaborare un prodotto): 2s
 
 
 

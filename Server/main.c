@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     pthread_t thread_direttore;
     if(pthread_create(&thread_direttore, NULL, controllaUscita, carrelli) < 0) perror("Could not create thread"), exit(EXIT_FAILURE);
     printf("[SERVER] Entrano i cassieri\n");
-    for(int i=0; i<N_CASSE; i++) cassiereEntra(i, 5, 2, carrelli, &coda_casse);
+    for(int i=0; i<N_CASSE; i++) cassiereEntra(i, TEMPO_CASSIERE, TEMPO_PRODOTTO, carrelli, &coda_casse);
     int server_socket = 0;
     int client_socket = 0;
     struct sockaddr_in server_address;
