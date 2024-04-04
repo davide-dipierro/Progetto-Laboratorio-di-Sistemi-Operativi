@@ -136,7 +136,7 @@ Il client si connetterà automaticamente al server e lancererà 20 autopiloti.
 
 # DISCLAIMER #
 
-Attualmente all'interno della schermata principale del client Android è presente una textbox che permette di inserire
+Attualmente all'interno della schermata iniziale del client Android è presente una textbox che permette di inserire
 l'indirizzo IP del server, ciò è stato introdotto al solo scopo di ridurre le ore di utilizzo del server di AWS e non 
 è da ritenersi parte del prodotto finale.
 
