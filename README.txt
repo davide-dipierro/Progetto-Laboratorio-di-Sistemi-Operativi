@@ -38,13 +38,11 @@ ProgettoLSO
 │   └── main.c--------------------------------> File sorgente principale del server
 │
 ├── Makefile----------------------------------> File per la compilazione dell'intero progetto
+├── Documentazione.pdf------------------------> Documentazione tecnica in formato pdf
 ├── README.txt--------------------------------> Questo file
 ├── app-debug.apk-----------------------------> File per l'installazione dell'applicazione su Android
 └── compose.yaml------------------------------> File per la creazione dei container
 
-
-
-# IL CODICE SORGENTE DEL CLIENT ANDROID E' VISIBILE SU GITHUB NEL RAMO MASTER #
 
 
 
